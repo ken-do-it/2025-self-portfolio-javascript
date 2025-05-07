@@ -17,3 +17,12 @@
     height: 200px;
     /* object-fit: cover; */
 }
+
+.culturalEvent {
+   display: flex;
+   justify-content: center;
+}
+
+.culturalEvent>div {
+    margin: 25px;
+}

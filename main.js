@@ -29,10 +29,9 @@ const renderCulturalEvent = () => {
                 <p class="card-text">📍 ${eItems.PLACE}</p>
                 ${eItems.fee ? `<p>💰 ${eItems.fee}</p>` : ''}
                 ${eItems.category ? `<p>🏷️ ${eItems.category}</p>` : ''}
-                <a href="${eItems.ORG_LINK}" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a>
-                <a href="#" class="btn btn-primary">Go somewhere_1</a>
+                <a href="${eItems.ORG_LINK}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a>
             </div>
-        </div>`)
+        </div>`).join('')
     document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML
 }
 
