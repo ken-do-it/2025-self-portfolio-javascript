@@ -6,10 +6,11 @@ let culturalEventItems = []
 const getActives = async() => {
     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/12/%20/%20/2025`)
     const response = await fetch(url)
-    console.log("response", response)
     const data = await response.json()
     console.log("data", data)
     culturalEventItems = data.culturalEventInfo.row
+    culturalEventItems = culturalEventItems.reverse();
+
     console.log("culturalEventItems",culturalEventItems)
     renderCulturalEvent()
     
