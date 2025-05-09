@@ -3,22 +3,36 @@
 
 let culturalEventItems = []
 
+let totalResults = 0
+let page = 1
+let pageSize =12
+let groupSize =5 
+
+
+
+
+// 내가 한거 
 const getActives = async() => {
     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/12/%20/%20/2025`)
     const response = await fetch(url)
     const data = await response.json()
+    totalResults = data.list_total_count
     console.log("data", data)
     culturalEventItems = data.culturalEventInfo.row
     culturalEventItems = culturalEventItems.reverse();
 
     console.log("culturalEventItems",culturalEventItems)
     renderCulturalEvent()
+    getPagination()
     
 }
 
 
 
 
+
+
+// 내가 한거 
 const renderCulturalEvent = () => {
     const culturalEventHTML = culturalEventItems.map((eItems)=>
         `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
@@ -26,7 +40,7 @@ const renderCulturalEvent = () => {
             <div class="card-body">
                 <h5 class="card-title">${eItems.TITLE}</h5>
                 
-                <p>📅 ${formatDateWithDay(eItems.STRTDATE)} -${formatDateWithDay(eItems.END_DATE)} </p>
+                <p>📅 ${eItems.DATE} </p>
                 <p class="card-text">📍 ${eItems.PLACE}</p>
                 ${eItems.fee ? `<p>💰 ${eItems.fee}</p>` : ''}
                 ${eItems.category ? `<p>🏷️ ${eItems.category}</p>` : ''}
@@ -37,34 +51,43 @@ const renderCulturalEvent = () => {
 }
 
 
-// date resolve 1
-// const formatDate = (datetimeStr) => {
-//     datetimeStr.split(" ")[0]; // "2025-12-21 00:00:00.0" → "2025-12-21"
-//     const [year, month, day] = datetimeStr.split(" ")[0].split("-");
-//     return `${year}년${month}월${day}일`;
-//   };
 
-
-// date resolve 2
-//   const formatDate = (datetimeStr) => {
-//     return datetimeStr.substring(0, 10); // 앞의 10자리만 잘라옴 → "2025-12-21"
-//   };
-
-// date resolve 3
-const formatDateWithDay = (datetimeStr) => {
-    const datePart = datetimeStr.split(" ")[0]; // "2025-12-21"
-    const [year, month, day] = datePart.split("-");
-    const dateObj = new Date(`${year}-${month}-${day}`);
   
-    const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-    const dayName = days[dateObj.getDay()];
   
-    return `${year}년${month}월${day}일 (${dayName})`;
-  };
+const getPagination =() =>{
+     //total results
+    //page Size 10
+    //total page 
+    let totalPage = Math.ceil(totalResults/pageSize) 
+    //group size 5
+    //page 1
+    //page group
+    let pageGroup = Math.ceil(page/groupSize)
+    //last page
+    let lastPage = Math.ceil(pageGroup*groupSize)
+    if (lastPage > totalPage) {
+        lastPage = totalPage
+    }
+    let firstPage = Math.ceil(lastPage-(groupSize-1)) <=0? 1 : lastPage-(groupSize-1)
+
+    let pageHTML = ""
+    for (let i=firstPage; i<=lastPage; i++){
+        pageHTML += `<li class="page-item" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>`
+    }
+    document.querySelector(".pagination").innerHTML = pageHTML
+}
+
+
+  
+const moveToPage = (pageNum) =>{
+    page = pageNum
+    getActives()
+}
+
 getActives()
 
 
-
+// sample
 // aaaHTML = `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
 //                         <img src="..." class="card-img-top" alt="...">
 //                         <div class="card-body">
@@ -76,4 +99,4 @@ getActives()
 
 //     document.getElementById("culturalEvent")
 
-{/* <p>📅 ${formatDate(eItems.startDate)} - ${formatDate(eItems.endDate)}</p> */}
+// {/* <p>📅 ${formatDate(eItems.startDate)} - ${formatDate(eItems.endDate)}</p> */}
