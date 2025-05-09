@@ -1,0 +1,28 @@
+.main-head {
+    background-color: rgb(95, 95, 95);
+    height: 15rem;
+}
+
+.main-head div{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: aliceblue;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 200px;
+    /* object-fit: cover; */
+}
+
+.culturalEvent {
+   display: flex;
+   justify-content: center;
+}
+
+.culturalEvent>div {
+    margin: 25px;
+}
