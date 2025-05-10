@@ -3,7 +3,11 @@
 // const API_KEY = '4f5a73544c6c716939324278625a43';
 // import { API_KEY } from './config.js';
 // const API_KEY = import.meta.env.VITE_API_KEY;
+import dotenv from "dotenv"
+dotenv.config()
+const API_KEY = process.env.API_KEY;
 
+console.log(API_KEY)
 
 let culturalEventItems = []
 
