@@ -2,7 +2,7 @@
 export default async function handler(req, res) {
   const API_KEY = process.env.API_KEY;
 
-  let url = `http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/12`;
+  let url = `http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000`;
 
   try {
     const response = await fetch(url);
