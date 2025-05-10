@@ -1,22 +1,34 @@
 //let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/5/`) 
 
+let culturalEventItems = [];
+let filteredItems = [];
+let totalResults = 0;
+let page = 1;
+let pageSize = 12;
+let groupSize = 5;
 
-fetch('/api/getEvents')
-  .then((res) => res.json())
-  .then((data) => {
-    // culturalEventInfo.row 를 렌더링하면 됨
-  });
+// ✅ 오늘 이후 행사만 필터
+const filterUpcomingEvents = (items) => {
+  const today = new Date();
+  return items.filter(item => new Date(item.STRTDATE) >= today);
+};
 
+// ✅ 시작일 기준 오름차순 정렬
+const sortByStartDate = (items) => {
+  return items.sort((a, b) => new Date(a.STRTDATE) - new Date(b.STRTDATE));
+};
 
-let culturalEventItems = []
+// ✅ 날짜 포맷 (요일 포함)
+const formatDateWithDay = (datetimeStr) => {
+  const datePart = datetimeStr.split(" ")[0];
+  const [year, month, day] = datePart.split("-");
+  const dateObj = new Date(`${year}-${month}-${day}`);
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  const dayName = days[dateObj.getDay()];
+  return `${year}.${month}.${day} (${dayName})`;
+};
 
-let totalResults = 0
-let page = 1
-let pageSize =12
-let groupSize =5 
-
-
-// API 호출 gpt
+// ✅ 서버에서 데이터 받아오기
 const getActives = async () => {
   const response = await fetch('/api/getEvents');
   const data = await response.json();
@@ -26,88 +38,76 @@ const getActives = async () => {
   rows = sortByStartDate(rows);
 
   culturalEventItems = rows;
-  filteredItems = [...culturalEventItems]; // 기본 필터
+  filteredItems = [...culturalEventItems];
   totalResults = filteredItems.length;
 
   renderCulturalEvent();
   getPagination();
 };
 
-
-// // 내가 한거 
-// const getActives = async() => {
-//     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/12/%20/%20/2025`)
-//     const response = await fetch(url)
-//     const data = await response.json()
-//     totalResults = data.list_total_count
-//     console.log("data", data)
-//     culturalEventItems = data.culturalEventInfo.row
-//     culturalEventItems = culturalEventItems.reverse();
-
-//     console.log("culturalEventItems",culturalEventItems)
-//     renderCulturalEvent()
-//     getPagination()
-    
-// }
-
-
-
-
-
-
-// 내가 한거 
+// ✅ 카드 렌더링
 const renderCulturalEvent = () => {
-    const culturalEventHTML = culturalEventItems.map((eItems)=>
-        `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
-            <img src="${eItems.MAIN_IMG}" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">${eItems.TITLE}</h5>
-                
-                <p>📅 ${eItems.DATE} </p>
-                <p class="card-text">📍 ${eItems.PLACE}</p>
-                ${eItems.fee ? `<p>💰 ${eItems.fee}</p>` : ''}
-                ${eItems.category ? `<p>🏷️ ${eItems.category}</p>` : ''}
-                <a href="${eItems.ORG_LINK}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a>
-            </div>
-        </div>`).join('')
-    document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML
-}
+  const startIdx = (page - 1) * pageSize;
+  const endIdx = page * pageSize;
+  const pageItems = filteredItems.slice(startIdx, endIdx);
+
+  const culturalEventHTML = pageItems.map((eItems) =>
+    `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
+      <img src="${eItems.MAIN_IMG}" class="card-img-top" alt="이미지 없음">
+      <div class="card-body">
+        <h5 class="card-title">${eItems.TITLE}</h5>
+        <p>📅 ${formatDateWithDay(eItems.STRTDATE)} ~ ${formatDateWithDay(eItems.END_DATE)}</p>
+        <p class="card-text">📍 ${eItems.PLACE}</p>
+        ${eItems.USE_FEE ? `<p>💰 ${eItems.USE_FEE}</p>` : ''}
+        <a href="${eItems.ORG_LINK}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a>
+      </div>
+    </div>`
+  ).join('');
+
+  document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML;
+};
+
+// ✅ 페이지네이션 렌더링
+const getPagination = () => {
+  const totalPage = Math.ceil(filteredItems.length / pageSize);
+  const pageGroup = Math.ceil(page / groupSize);
+  let lastPage = pageGroup * groupSize;
+  if (lastPage > totalPage) lastPage = totalPage;
+  let firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1);
+
+  let pageHTML = "";
+
+  if (firstPage > 1) {
+    pageHTML += `<li class="page-item" onclick="moveToPage(${firstPage - 1})"><a class="page-link">&laquo;</a></li>`;
+  }
+
+  for (let i = firstPage; i <= lastPage; i++) {
+    pageHTML += `<li class="page-item ${page === i ? "active" : ""}" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>`;
+  }
+
+  if (lastPage < totalPage) {
+    pageHTML += `<li class="page-item" onclick="moveToPage(${lastPage + 1})"><a class="page-link">&raquo;</a></li>`;
+  }
+
+  document.querySelector(".pagination").innerHTML = pageHTML;
+};
 
 
+// ✅ main.js 하단에 추가하세요
+window.moveToPage = (pageNum) => {
+  page = pageNum;
+  renderCulturalEvent();
+  getPagination();
+};
+// // ✅ 페이지 이동
+// const moveToPage = (pageNum) => {
+//   page = pageNum;
+//   renderCulturalEvent();
+//   getPagination();
+// };
 
-  
-  
-const getPagination =() =>{
-     //total results
-    //page Size 10
-    //total page 
-    let totalPage = Math.ceil(totalResults/pageSize) 
-    //group size 5
-    //page 1
-    //page group
-    let pageGroup = Math.ceil(page/groupSize)
-    //last page
-    let lastPage = Math.ceil(pageGroup*groupSize)
-    if (lastPage > totalPage) {
-        lastPage = totalPage
-    }
-    let firstPage = Math.ceil(lastPage-(groupSize-1)) <=0? 1 : lastPage-(groupSize-1)
-
-    let pageHTML = ""
-    for (let i=firstPage; i<=lastPage; i++){
-        pageHTML += `<li class="page-item" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>`
-    }
-    document.querySelector(".pagination").innerHTML = pageHTML
-}
-
-
-  
-const moveToPage = (pageNum) =>{
-    page = pageNum
-    getActives()
-}
-
-getActives()
+// ✅ 초기 실행
+getActives();
 
 
 // sample
