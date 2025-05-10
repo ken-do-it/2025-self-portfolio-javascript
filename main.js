@@ -1,13 +1,12 @@
 //let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/5/`) 
-// (http://openapi.seoul.go.kr:8088/sample/xml/culturalEventInfo/1/5/%20/%20/2025)
-// const API_KEY = '4f5a73544c6c716939324278625a43';
-// import { API_KEY } from './config.js';
-// const API_KEY = import.meta.env.VITE_API_KEY;
-import dotenv from "dotenv"
-dotenv.config()
-const API_KEY = process.env.API_KEY;
 
-console.log(API_KEY)
+
+fetch('/api/getEvents')
+  .then((res) => res.json())
+  .then((data) => {
+    // culturalEventInfo.row 를 렌더링하면 됨
+  });
+
 
 let culturalEventItems = []
 
@@ -17,23 +16,39 @@ let pageSize =12
 let groupSize =5 
 
 
+// API 호출 gpt
+const getActives = async () => {
+  const response = await fetch('/api/getEvents');
+  const data = await response.json();
+
+  let rows = data.culturalEventInfo.row;
+  rows = filterUpcomingEvents(rows);
+  rows = sortByStartDate(rows);
+
+  culturalEventItems = rows;
+  filteredItems = [...culturalEventItems]; // 기본 필터
+  totalResults = filteredItems.length;
+
+  renderCulturalEvent();
+  getPagination();
+};
 
 
-// 내가 한거 
-const getActives = async() => {
-    let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/12/%20/%20/2025`)
-    const response = await fetch(url)
-    const data = await response.json()
-    totalResults = data.list_total_count
-    console.log("data", data)
-    culturalEventItems = data.culturalEventInfo.row
-    culturalEventItems = culturalEventItems.reverse();
+// // 내가 한거 
+// const getActives = async() => {
+//     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/12/%20/%20/2025`)
+//     const response = await fetch(url)
+//     const data = await response.json()
+//     totalResults = data.list_total_count
+//     console.log("data", data)
+//     culturalEventItems = data.culturalEventInfo.row
+//     culturalEventItems = culturalEventItems.reverse();
 
-    console.log("culturalEventItems",culturalEventItems)
-    renderCulturalEvent()
-    getPagination()
+//     console.log("culturalEventItems",culturalEventItems)
+//     renderCulturalEvent()
+//     getPagination()
     
-}
+// }
 
 
 
