@@ -92,12 +92,19 @@ const getPagination = () => {
   document.querySelector(".pagination").innerHTML = pageHTML;
 };
 
-// ✅ 페이지 이동
-const moveToPage = (pageNum) => {
+
+// ✅ main.js 하단에 추가하세요
+window.moveToPage = (pageNum) => {
   page = pageNum;
   renderCulturalEvent();
   getPagination();
 };
+// // ✅ 페이지 이동
+// const moveToPage = (pageNum) => {
+//   page = pageNum;
+//   renderCulturalEvent();
+//   getPagination();
+// };
 
 // ✅ 초기 실행
 getActives();
