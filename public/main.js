@@ -202,7 +202,7 @@ const renderPagination = () => {
 }
 
 
-const moveToPage = (pageNum) => {
+window.moveToPage = (pageNum) => {
     page = pageNum
     getCulturalEvent()
 
