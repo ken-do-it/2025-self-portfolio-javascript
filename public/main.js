@@ -32,7 +32,7 @@ const formatDateWithDay = (datetimeStr) => {
 const getActives = async () => {
 
 // --- 배포할때는 아래 2개 주석처리  이부분은 로컬용 
-    let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/5/`)
+    let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
     const response = await fetch(url)
 //-----------
 
@@ -49,6 +49,8 @@ const getActives = async () => {
   culturalEventItems = rows;
   filteredItems = [...culturalEventItems];
   totalResults = filteredItems.length;
+
+  console.log(filteredItems)
 
   renderCulturalEvent();
   getPagination();
