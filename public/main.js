@@ -55,6 +55,7 @@ const getCulturalEvent = async () => {
 //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
   const response = await fetch('/api/getEvents');  
 //-----------------------------------
+
     const data = await response.json()
     culturalEventItems = data.culturalEventInfo.row
     culturalEventItems = sortEventDate(filterUpComingEvents(culturalEventItems))
@@ -113,16 +114,11 @@ const renderEvent = () =>{
 
 
 
- 
-
-
-
 const renderPagination = () => {
     //totalResults
     //pageSize 12
     // totalPage
     let totalPage = Math.ceil(totalResults/pageSize)
-    console.log("totalPage", totalPage)
     //groupSize 5
     //page
     //pageGroup 
@@ -159,6 +155,8 @@ const renderPagination = () => {
 const moveToPage = (pageNum) => {
     page = pageNum
     getCulturalEvent()
+
+    renderPagination();
 
 }
 
