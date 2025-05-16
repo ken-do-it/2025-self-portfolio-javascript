@@ -77,7 +77,6 @@ const searchKeyword = () => {
     keywordFiltered = culturalEventItems.filter(item => 
     item.TITLE.includes(keyword) );
 
-
     
     // 결과 업데이트
 
@@ -154,8 +153,8 @@ const renderPagination = () => {
 
 const moveToPage = (pageNum) => {
     page = pageNum
-    getCulturalEvent()
-
+    // getCulturalEvent()
+    renderEvent(); 
     renderPagination();
 
 }
