@@ -190,7 +190,7 @@ const renderPagination = ()=>{
 
 }
 
-const moveToPage = (pageNum) => {
+window.moveToPage = (pageNum) => {
     page = pageNum
     getCulturalEvent()
      window.scrollTo({ top: 0, behavior: "smooth" }); // 👈 화면 상단으로 스크롤
