@@ -49,99 +49,123 @@
 // } 
 
 
-// search 기능  done
-
 
 const searchInput = document.getElementById("search-input")
-// const searchButton = document.getElementById("search-button")
-let culturalEventItems = []
-let keywordFiltered = []
-let userValue = ""
+searchInput.addEventListener("keydown", (e)=>{
+    e.preventDefault
+    if(e.key === "Enter") {
+        searchKeyword()
+    }
+})
+
+const showSpinner = () => {
+  document.getElementById("loading-spinner").style.display = "block";
+};
+
+const hideSpinner = () => {
+  document.getElementById("loading-spinner").style.display = "none";
+};
+
+
+let culturalItems = []
+let filteredEvents = []
+let eventsItems = []
+let getEventItems = []
+
 //totalResults
 let totalResults = 0
-//pageSize 12
-const pageSize = 12
-// totalPage
-let totalPage = 0
-//groupSize 5
-const groupSize = 5
+//pageSize 9
+const pageSize = 9 
+//totalPage
+
 //page
-let page =1
+let page = 1
+//groupSize = 5
+const groupSize = 5
 
 
 
-searchInput.addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    searchKeyword();
-  }
-});
-
-const filterUpComingEvents = (items) =>{
+const filterUpComingEvents =(items)=>{
     let today = new Date()
-    return items.filter((item)=> new Date(item.STRTDATE) >= today)
+    return items.filter((item)=>new Date (item.STRTDATE) >= today)
 }
 
-const sortEventDate =(items) => {
-    return items.sort((a , b )=> new Date (a.STRTDATE) - new Date(b.STRTDATE) )
+const sortEventDate =(items)=>{
+    return items.sort((a,b)=> new Date(a.STRTDATE) - new Date(b.STRTDATE))
 }
 
-
-const getList = (list, page) =>{
-
-    const start = (page-1) *pageSize
-    const end = page * pageSize
+const getItems =(list , page) =>{
+    let start = (page-1)*pageSize
+    let end = page*pageSize
     return list.slice(start, end)
 }
 
+
 const getCulturalEvent = async () => {
-    // let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`) 
+
+    showSpinner(); // 👉 스피너 먼저 보여주기
+
+    try {
+         // let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+        // const response = await fetch(url)
+
+
+
+        //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
+        const response = await fetch('/api/getEvents');  
+        //-----------------------------------
+
+
+
+        const data = await response.json();
+        culturalItems = data.culturalEventInfo.row;
+
+        filteredEvents = sortEventDate(filterUpComingEvents(culturalItems));
+        totalResults = filteredEvents.length;
+        eventsItems = [...filteredEvents];
+
+        renderEvent();
+        renderPagination();
+    } catch (error) {
+        console.error("데이터 불러오기 실패:", error);
+    } finally {
+        hideSpinner(); // 👉 완료 후 스피너 숨기기
+    }
+    // let url  = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
     // const response = await fetch(url)
+    // const data = await response.json()
+    // culturalItems = data.culturalEventInfo.row
 
-    //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
-  const response = await fetch('/api/getEvents');  
-//-----------------------------------
-    const data = await response.json()
-    culturalEventItems = data.culturalEventInfo.row
-    culturalEventItems = sortEventDate(filterUpComingEvents(culturalEventItems))
-    keywordFiltered = [...culturalEventItems]
-    totalResults = culturalEventItems.length
+    // filteredEvents = sortEventDate(filterUpComingEvents(culturalItems))
+
+    // console.log("filteredEvents", filteredEvents)
+    // totalResults = filteredEvents.length
+    // eventsItems = [...filteredEvents]
 
 
-    
-    console.log(culturalEventItems)
     renderEvent()
     renderPagination()
 }
 
 
-const searchKeyword = () => {
-
-    console.log("keyword")
-    const keyword = searchInput.value.trim(); // 입력값 받기
-    keywordFiltered = culturalEventItems.filter(item => 
-    item.TITLE.includes(keyword) );// 키워드 포함된 항목만
-
-  console.log("검색결과", keywordFiltered); // 확인용 로그
+window.searchKeyword =()=>{
     
-    // 결과 업데이트
-//   culturalEventItems =keywordFiltered;
-  totalResults = keywordFiltered.length;
-  page = 1; // 페이지 리셋
+    let keyword = searchInput.value.trim()
+    eventsItems = filteredEvents.filter((item)=>item.TITLE.includes(keyword))
 
-   // culturalEventItems = handleSearchFilter(culturalEventItems.TITLE.includes(userValue)) ❌ 잘못 사용
-  
-
-  renderEvent();
-  renderPagination();
-
+    console.log("eventItems_1",eventsItems)
+    page =1
+    renderEvent()
+    renderPagination()
 }
 
 
 const renderEvent = () =>{
 
-    const culturalList = getList(keywordFiltered,page) 
-    const culturalEventHTML = culturalList.map((eItems)=> 
+    getEventItems = getItems(eventsItems, page)
+    console.log("eventItems_2",eventsItems)
+
+    const culturalEventHTML = getEventItems.map((eItems)=>
         `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
             <img src="${eItems.MAIN_IMG}" class="card-img-top" alt="이미지 없음">
             <div class="card-body">
@@ -157,55 +181,44 @@ const renderEvent = () =>{
     document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML;
 }
 
-
-
- 
-
-
-
 const renderPagination = () => {
     //totalResults
-    //pageSize 12
-    // totalPage
+    //pageSize 9
+    //totalPage
     let totalPage = Math.ceil(totalResults/pageSize)
-    console.log("totalPage", totalPage)
-    //groupSize 5
+    console.log(totalPage)
     //page
-    //pageGroup 
-    let pageGroup = Math.ceil(page/groupSize)
+    //groupSize = 5
+    //pageGroup
+    let pageGroup = Math.ceil(page / groupSize)
     //lastPage
     let lastPage = pageGroup *groupSize
-    if (lastPage > totalPage){
-        lastPage = totalPage
+    if (lastPage < groupSize) {
+        lastPage = groupSize
     }
     //firstPage
-    let firstPage = (lastPage - (groupSize-1)) <= 0 ? 1:(lastPage - (groupSize-1)) 
-
+    let firstPage = lastPage - (groupSize - 1) <= 0 ? 1: lastPage - (groupSize - 1)
 
     let pageHTML = ""
 
-    if (firstPage > 1) {
-        pageHTML +=`<li class="page-item" onclick="moveToPage(${firstPage-1})"><a class="page-link">&laquo;</a></li>`
-    } 
 
+    if(firstPage > 1) {
+        pageHTML += `<li class="page-item" onclick="moveToPage(${firstPage - 1})"><a class="page-link">&laquo;</a></li>`;
+    }
 
-    for (let i= firstPage; i<= lastPage; i++) {
-        pageHTML +=`<li class="page-item ${page === i ? "active" : ""}" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>` 
+    for (let i=firstPage; i<=lastPage; i++) {
+        pageHTML += `<li class="page-item ${page === i ? "active": "" } " onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>`;
     }
 
     if (lastPage < totalPage) {
-        pageHTML +=`<li class="page-item" onclick="moveToPage(${lastPage +1})"><a class="page-link">&raquo;</a></li>`
+         pageHTML += `<li class="page-item" onclick="moveToPage(${lastPage + 1})"><a class="page-link">&raquo;</a></li>`;
     }
-
     document.querySelector(".pagination").innerHTML = pageHTML
-
 }
 
-
-window.moveToPage = (pageNum) => {
+window.moveToPage=(pageNum) =>{
     page = pageNum
     getCulturalEvent()
-
 }
 
 getCulturalEvent()
