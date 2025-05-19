@@ -1,33 +1,97 @@
+
+// let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+//culturalEventInfo
+//list_total_count
+//STRTDATE
+
+// pageHTML += `<li class="page-item" onclick="moveToPage(${firstPage - 1})"><a class="page-link">&laquo;</a></li>`;
+
+
+// // << 이전 그룹
+//     if (firstPage > 1) {
+//       pageHTML += `<li class="page-item" onclick="moveToPage(${firstPage - 1})"><a class="page-link">&laquo;</a></li>`;
+//     }
+
+//     for (let i= firstPage; i <=lastPage; i++) {
+        
+//         pageHTML += `<li class="page-item ${page === i ? "active" : ""}" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>` 
+//     }
+
+//           // >> 다음 그룹
+//     if (lastPage < totalPage) {
+//       pageHTML += `<li class="page-item" onclick="moveToPage(${lastPage + 1})"><a class="page-link">&raquo;</a></li>`;
+//     }
+
+//     document.querySelector(".pagination").innerHTML = pageHTML
+
+
+
+// const renderEvent = () => {
+//         // ✅ 카드 렌더링
+//         // const startIdx = (page - 1) * pageSize;
+//         // const endIdx = page * pageSize;
+//         // const pageItems = filteredItems.slice(startIdx, endIdx);
+
+//         const culturalEventHTML = culturalItems.map((eItems) =>
+//             `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
+//             <img src="${eItems.MAIN_IMG}" class="card-img-top" alt="이미지 없음">
+//             <div class="card-body">
+//                 <h5 class="card-title">${eItems.TITLE}</h5>
+//                 <p>📅 ${formatDateWithDay(eItems.STRTDATE)} ~ ${formatDateWithDay(eItems.END_DATE)}</p>
+//                 <p class="card-text">📍 ${eItems.PLACE}</p>
+//                 ${eItems.USE_FEE ? `<p>💰 ${eItems.USE_FEE}</p>` : ''}
+//                 <a href="${eItems.ORG_LINK}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a>
+//             </div>
+//             </div>`
+//         ).join('');
+
+//     document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML;
+// } 
+
+
+setTimeout(function() {
+ console.log('TEST!');
+}, 3000);
+
+
 const searchInput = document.getElementById("search-input")
-searchInput.addEventListener("keydown", (e)=>{
-    e.preventDefault
-    if(e.key === "Enter") {
+searchInput.addEventListener ("keydown", (e)=> {
+    if (e.key == "Enter") {
+        e.preventDefault
         searchKeyword()
     }
 })
 
+const spinner = document.getElementById("loading-spinner")
+const content = document.getElementById("cultural-Card-id")
+
+
 const showSpinner = () => {
-    document.getElementById("loading-spinner").style.display = "block";
-    document.getElementById("cultural-Card-id").style.display = "none"; // 카드 숨기기
+    if (spinner && content) {
+        spinner.style.display = "block";
+        content.classList.remove("fade-in");
+        content.classList.add("fade-out");
+    }
 };
 
 const hideSpinner = () => {
-    document.getElementById("loading-spinner").style.display = "none";
-    document.getElementById("cultural-Card-id").style.display = "flex"; // 다시 보이기
+  if (spinner && content) {
+    spinner.style.display = "none";
+    content.classList.remove("fade-out");
+    content.classList.add("fade-in");
+  }
 };
-
 
 let culturalItems = []
 let filteredEvents = []
-let eventsItems = []
-let getEventItems = []
+let itemsList = []
 
 //totalResults
 let totalResults = 0
-//pageSize 9
-const pageSize = 9 
+//pageSize= 9
+const pageSize = 9
 //totalPage
-
+let totalPage = 0
 //page
 let page = 1
 //groupSize = 5
@@ -35,92 +99,64 @@ const groupSize = 5
 
 
 
-const filterUpComingEvents =(items)=>{
+const filterUpComingEvents = (items) =>{
     let today = new Date()
-    return items.filter((item)=>new Date (item.STRTDATE) >= today)
+    return items.filter((item)=>new Date(item.STRTDATE) >= today)
 }
 
-const sortEventDate =(items)=>{
-    return items.sort((a,b)=> new Date(a.STRTDATE) - new Date(b.STRTDATE))
+const sortEventDate = (items) =>{
+    return items.sort((a,b) => new Date(a.STRTDATE) - new Date(b.STRTDATE))
 }
 
-const getItems =(list , page) =>{
-    let start = (page-1)*pageSize
-    let end = page*pageSize
-    return list.slice(start, end)
-}
+
+
 
 
 const getCulturalEvent = async () => {
+     showSpinner();
+     try {
+    //     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+    // const response = await fetch(url)
 
-    showSpinner(); // 👉 스피너 먼저 보여주기
-
-    try {
-         // let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-        // const response = await fetch(url)
-
-
-
+    
         //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
         const response = await fetch('/api/getEvents');  
         //-----------------------------------
 
-
-
-        const data = await response.json();
-        culturalItems = data.culturalEventInfo.row;
-
-        filteredEvents = sortEventDate(filterUpComingEvents(culturalItems));
-        totalResults = filteredEvents.length;
-        eventsItems = [...filteredEvents];
-
-        renderEvent();
-        renderPagination();
-    } catch (error) {
-        console.error("데이터 불러오기 실패:", error);
-    } finally {
-        hideSpinner(); // 👉 완료 후 스피너 숨기기
-    }
-    // let url  = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-    // const response = await fetch(url)
-    // const data = await response.json()
-    // culturalItems = data.culturalEventInfo.row
-
-    // filteredEvents = sortEventDate(filterUpComingEvents(culturalItems))
-
-    // console.log("filteredEvents", filteredEvents)
-    // totalResults = filteredEvents.length
-    // eventsItems = [...filteredEvents]
-
-
-    renderEvent()
-    renderPagination()
-}
-
-
-window.searchKeyword =()=>{
+    const data = await response.json()
+    console.log(data)
+    culturalItems = data.culturalEventInfo.row
+    filteredEvents = sortEventDate(filterUpComingEvents(culturalItems))
     
-    let keyword = searchInput.value.trim()
-    eventsItems = filteredEvents.filter((item)=>item.TITLE.includes(keyword))
+    itemsList = [...filteredEvents]
+    totalResults= itemsList.length
+    console.log("totalResults_1" , totalResults)
 
-    console.log("eventItems_1",eventsItems)
-    page =1
+    console.log(filteredEvents)
+
+
     renderEvent()
     renderPagination()
+     } catch (error) {
+        console.error("데이터 불러오기 실패:", error);
+     }finally {
+    hideSpinner();
+  }
+    
 }
+
 
 
 const renderEvent = () =>{
 
-    getEventItems = getItems(eventsItems, page)
-    console.log("eventItems_2",eventsItems)
-
-    const culturalEventHTML = getEventItems.map((eItems)=>
+    let eventPageList = getPage(itemsList, page)
+    console.log("eventPageList",eventPageList)
+    const culturalEventHTML = eventPageList.map((eItems)=>
         `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
             <img src="${eItems.MAIN_IMG}" class="card-img-top" alt="이미지 없음">
             <div class="card-body">
                 <h5 class="card-title">${eItems.TITLE}</h5>
-                <p>📅 ${eItems.STRTDATE}</p>
+                <p>📅 ${eItems.DATE} </p>
                 <p class="card-text">📍 ${eItems.PLACE}</p>
                 ${eItems.USE_FEE ? `<p>💰 ${eItems.USE_FEE}</p>` : ''}
                 <a href="${eItems.ORG_LINK}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a>
@@ -128,45 +164,73 @@ const renderEvent = () =>{
             </div>`
         ).join('');
 
-    document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML;
+    // document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML;
+    content.innerHTML = culturalEventHTML
 }
 
-const renderPagination = () => {
+
+// const searchKeyword = ()=>{
+    window.searchKeyword = () => {
+    let keyword = searchInput.value.trim()
+    console.log(keyword)
+    itemsList = filteredEvents.filter((items)=>items.TITLE.includes(keyword))
+
+    page = 1
+    
+    renderEvent()
+    renderPagination()
+}
+
+
+const getPage = (list, page) =>{
+    const start = (page-1)*pageSize
+    const end = page*pageSize
+    return list.slice(start, end)
+}
+
+const renderPagination = ()=>{
     //totalResults
-    //pageSize 9
+    //pageSize= 9
     //totalPage
-    let totalPage = Math.ceil(totalResults/pageSize)
-    console.log(totalPage)
+    let totalPage = Math.ceil(itemsList.length/pageSize)
     //page
     //groupSize = 5
     //pageGroup
-    let pageGroup = Math.ceil(page / groupSize)
+    let pageGroup = Math.ceil(page/groupSize)
     //lastPage
-    let lastPage = pageGroup *groupSize
+    let lastPage = pageGroup * groupSize
+
+    console.log(lastPage)
     if (lastPage < groupSize) {
         lastPage = groupSize
     }
     //firstPage
-    let firstPage = lastPage - (groupSize - 1) <= 0 ? 1: lastPage - (groupSize - 1)
+    let firstPage = (lastPage - (groupSize-1)) <= 0 ? 1:(lastPage - (groupSize-1))
+
 
     let pageHTML = ""
 
-
-    if(firstPage > 1) {
+    if (pageGroup > 1) {
         pageHTML += `<li class="page-item" onclick="moveToPage(${firstPage - 1})"><a class="page-link">&laquo;</a></li>`;
     }
-
+    
     for (let i=firstPage; i<=lastPage; i++) {
-        pageHTML += `<li class="page-item ${page === i ? "active": "" } " onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>`;
-    }
+        pageHTML += `<li class="page-item ${page === i } ? "active": ""}" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>` 
+    } 
 
     if (lastPage < totalPage) {
-         pageHTML += `<li class="page-item" onclick="moveToPage(${lastPage + 1})"><a class="page-link">&raquo;</a></li>`;
+        pageHTML += `<li class="page-item" onclick="moveToPage(${lastPage + 1})"><a class="page-link">&raquo;</a></li>`;
     }
+
     document.querySelector(".pagination").innerHTML = pageHTML
+
+    console.log("totalResults_2",totalResults)
+    console.log("itemsList.length",itemsList.length)
+
 }
 
-window.moveToPage=(pageNum) =>{
+// const moveToPage =(pageNum)=>{
+window.moveToPage = (pageNum) =>{
     page = pageNum
     getCulturalEvent()
 }
