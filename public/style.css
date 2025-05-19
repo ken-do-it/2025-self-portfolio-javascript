@@ -28,7 +28,7 @@
 }
 
 
-
+/* 
 .fade-out {
   opacity: 0;
   transition: opacity 0.3s ease-out;
@@ -38,4 +38,26 @@
 .fade-in {
   opacity: 1;
   transition: opacity 0.3s ease-in;
+} */
+
+
+
+
+/* culturalEvent 감싸는 요소 (카드 리스트) */
+#cultural-Card-id {
+  transition: opacity 0.3s ease, height 0.3s ease;
+  overflow: hidden;
+}
+
+/* 사라질 때 */
+.fade-out {
+  opacity: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* 나타날 때 */
+.fade-in {
+  opacity: 1;
+  height: auto;
 }
