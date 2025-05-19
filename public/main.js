@@ -145,8 +145,8 @@ const renderPagination = ()=>{
     let lastPage = pageGroup * groupSize
 
     console.log(lastPage)
-    if (lastPage < groupSize) {
-        lastPage = groupSize
+    if (lastPage > totalPage) {
+        lastPage = totalPage
     }
     //firstPage
     let firstPage = (lastPage - (groupSize-1)) <= 0 ? 1:(lastPage - (groupSize-1))
