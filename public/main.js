@@ -49,10 +49,6 @@
 // } 
 
 
-setTimeout(function() {
- console.log('TEST!');
-}, 3000);
-
 
 const searchInput = document.getElementById("search-input")
 searchInput.addEventListener ("keydown", (e)=> {
@@ -115,12 +111,12 @@ const sortEventDate = (items) =>{
 const getCulturalEvent = async () => {
      showSpinner();
      try {
-    //     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-    // const response = await fetch(url)
+        let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+    const response = await fetch(url)
 
     
         //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
-        const response = await fetch('/api/getEvents');  
+        // const response = await fetch('/api/getEvents');  
         //-----------------------------------
 
     const data = await response.json()
