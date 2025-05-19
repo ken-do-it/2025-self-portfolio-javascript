@@ -1,54 +1,4 @@
 
-// let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-//culturalEventInfo
-//list_total_count
-//STRTDATE
-
-// pageHTML += `<li class="page-item" onclick="moveToPage(${firstPage - 1})"><a class="page-link">&laquo;</a></li>`;
-
-
-// // << 이전 그룹
-//     if (firstPage > 1) {
-//       pageHTML += `<li class="page-item" onclick="moveToPage(${firstPage - 1})"><a class="page-link">&laquo;</a></li>`;
-//     }
-
-//     for (let i= firstPage; i <=lastPage; i++) {
-        
-//         pageHTML += `<li class="page-item ${page === i ? "active" : ""}" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>` 
-//     }
-
-//           // >> 다음 그룹
-//     if (lastPage < totalPage) {
-//       pageHTML += `<li class="page-item" onclick="moveToPage(${lastPage + 1})"><a class="page-link">&raquo;</a></li>`;
-//     }
-
-//     document.querySelector(".pagination").innerHTML = pageHTML
-
-
-
-// const renderEvent = () => {
-//         // ✅ 카드 렌더링
-//         // const startIdx = (page - 1) * pageSize;
-//         // const endIdx = page * pageSize;
-//         // const pageItems = filteredItems.slice(startIdx, endIdx);
-
-//         const culturalEventHTML = culturalItems.map((eItems) =>
-//             `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
-//             <img src="${eItems.MAIN_IMG}" class="card-img-top" alt="이미지 없음">
-//             <div class="card-body">
-//                 <h5 class="card-title">${eItems.TITLE}</h5>
-//                 <p>📅 ${formatDateWithDay(eItems.STRTDATE)} ~ ${formatDateWithDay(eItems.END_DATE)}</p>
-//                 <p class="card-text">📍 ${eItems.PLACE}</p>
-//                 ${eItems.USE_FEE ? `<p>💰 ${eItems.USE_FEE}</p>` : ''}
-//                 <a href="${eItems.ORG_LINK}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a>
-//             </div>
-//             </div>`
-//         ).join('');
-
-//     document.getElementById("cultural-Card-id").innerHTML = culturalEventHTML;
-// } 
-
-
 
 const searchInput = document.getElementById("search-input")
 searchInput.addEventListener ("keydown", (e)=> {
@@ -111,32 +61,30 @@ const sortEventDate = (items) =>{
 const getCulturalEvent = async () => {
      showSpinner();
      try {
-        let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-    const response = await fetch(url)
+        // let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+        // const response = await fetch(url)
 
-    
-        //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
-        // const response = await fetch('/api/getEvents');  
-        //-----------------------------------
+        
+            //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
+            const response = await fetch('/api/getEvents');  
+            //-----------------------------------
 
-    const data = await response.json()
-    console.log(data)
-    culturalItems = data.culturalEventInfo.row
-    filteredEvents = sortEventDate(filterUpComingEvents(culturalItems))
-    
-    itemsList = [...filteredEvents]
-    totalResults= itemsList.length
-    console.log("totalResults_1" , totalResults)
-
-    console.log(filteredEvents)
+        const data = await response.json()
+        console.log(data)
+        culturalItems = data.culturalEventInfo.row
+        filteredEvents = sortEventDate(filterUpComingEvents(culturalItems))
+        
+        itemsList = [...filteredEvents]
+        totalResults= itemsList.length
 
 
-    renderEvent()
-    renderPagination()
+
+        renderEvent()
+        renderPagination()
      } catch (error) {
         console.error("데이터 불러오기 실패:", error);
      }finally {
-    hideSpinner();
+        hideSpinner();
   }
     
 }
@@ -146,7 +94,7 @@ const getCulturalEvent = async () => {
 const renderEvent = () =>{
 
     let eventPageList = getPage(itemsList, page)
-    console.log("eventPageList",eventPageList)
+
     const culturalEventHTML = eventPageList.map((eItems)=>
         `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
             <img src="${eItems.MAIN_IMG}" class="card-img-top" alt="이미지 없음">
@@ -220,8 +168,7 @@ const renderPagination = ()=>{
 
     document.querySelector(".pagination").innerHTML = pageHTML
 
-    console.log("totalResults_2",totalResults)
-    console.log("itemsList.length",itemsList.length)
+
 
 }
 
