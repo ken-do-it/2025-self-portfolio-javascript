@@ -20,7 +20,7 @@ let PageEventList = []
 
 const showSpinner = () => {
     if(spinner && content ) {
-        spinner.style.display = "black"
+        spinner.style.display = "block"
         content.classList.remove("fade-in")
         content.classList.add("fade-out")
     }
@@ -82,9 +82,12 @@ const getCulturalEvent = async () => {
     // const response = await fetch(url)
 
 
-        //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
-        const response = await fetch('/api/getEvents');  
-        //-----------------------------------
+    //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
+    const response = await fetch('/api/getEvents');  
+    //-----------------------------------
+
+
+
     const data = await response.json()
     culturalItems = data.culturalEventInfo.row
     filteredEvents = sortEventDate(filterUpComingEvents(culturalItems))
@@ -103,14 +106,9 @@ const getCulturalEvent = async () => {
 }   
 
 
-
-
 const renderEvent =()=>{
 
     
-    console.log("copyFilter.length",copyFilter.length)
-
-       
     PageEventList = getPage(copyFilter , page)
     const culturalEventHTML = PageEventList.map((eItems)=>
         `<div class="card col-lg-3 col-md-6 col-sm-12" style="width: 18rem;">
