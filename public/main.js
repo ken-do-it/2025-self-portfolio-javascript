@@ -65,7 +65,7 @@ const getPage = (list, page) =>{
 
 
 
-const searchKeyword  = () => {
+window.searchKeyword  = () => {
     let keyword = searchInput.value.trim()
 
     copySFItems = filteredEventItems.filter((item)=>item.TITLE.includes(keyword))
@@ -157,7 +157,7 @@ const getCulturalEvent = async () => {
         hideSpinner()
 
     } catch (error) {
-        console.error("error Message", error)
+        console.error("데이터 불러오기 실패:", error);
     }
     
 }
@@ -221,7 +221,7 @@ const renderPagination = ()=>{
 }
 
 
-const moveToPage = (pageNum) => {
+window.moveToPage = (pageNum) => {
     page = pageNum
     renderEvent()
     renderPagination()
