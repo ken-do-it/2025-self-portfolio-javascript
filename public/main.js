@@ -89,6 +89,8 @@ const inProgress = () =>{
     renderPagination()
 }
 
+onGoing.addEventListener("click", inProgress)
+
 
 
 const getCulturalEvent = async () => {
