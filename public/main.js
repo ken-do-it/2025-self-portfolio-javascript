@@ -2,6 +2,8 @@
 const searchInput = document.getElementById("search-input")
 const content = document.getElementById("cultural-Card-id")
 const spinner = document.getElementById("loading-spinner")
+const onGoing = document.getElementById("onGoing-id")
+
 
 
 
@@ -16,6 +18,7 @@ let culturalItems = []
 let filteredEvents =[]
 let copyFilter = []
 let PageEventList = []
+const today = new Date()
 
 
 const showSpinner = () => {
@@ -75,6 +78,22 @@ window.searchKeyword = () => {
     renderPagination()
 }
 
+
+
+
+
+const inProgress = () =>{
+    console.log("ongoing")
+    copyFilter = sortEventDate(culturalItems.filter((item) => new Date(item.END_DATE) >= today));
+
+    renderEvent()
+    renderPagination()
+}
+
+onGoing.addEventListener("click", inProgress)
+
+
+
 const getCulturalEvent = async () => {
     showSpinner()
     try {
@@ -104,6 +123,18 @@ const getCulturalEvent = async () => {
         hideSpinner()
     }
 }   
+
+
+
+// 날짜 포맷 + 요일
+const formatDateWithDay = (datetimeStr) => {
+  const [year, month, day] = datetimeStr.split(" ")[0].split("-");
+  const dateObj = new Date(`${year}-${month}-${day}`);
+  const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+  const dayName = days[dateObj.getDay()];
+  return `${year}.${month}.${day} (${dayName})`;
+};
+
 
 
 const renderEvent =()=>{
@@ -177,3 +208,11 @@ const renderError = (errorMessage) => {
 
 }
 getCulturalEvent()
+
+
+
+
+
+
+
+
