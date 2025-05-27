@@ -18,6 +18,7 @@ let culturalItems = []
 let filteredEvents =[]
 let copyFilter = []
 let PageEventList = []
+const today = new Date()
 
 
 const showSpinner = () => {
