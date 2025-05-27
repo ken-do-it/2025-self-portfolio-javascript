@@ -157,7 +157,7 @@ const getCulturalEvent = async () => {
         hideSpinner()
 
     } catch (error) {
-        console.error("error Message", error.message)
+        console.error("error Message", error)
     }
     
 }
