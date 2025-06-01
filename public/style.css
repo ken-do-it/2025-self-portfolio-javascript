@@ -61,3 +61,22 @@
   opacity: 1;
   height: auto;
 }
+
+
+
+
+/* Event List Panel */
+#event-list-panel {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  min-height: 700px;
+  max-height: 700px;
+  overflow-y: auto;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
