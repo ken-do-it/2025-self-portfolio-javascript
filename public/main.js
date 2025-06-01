@@ -3,6 +3,8 @@ const searchInput = document.getElementById("search-input")
 const content = document.getElementById("cultural-Card-id")
 const spinner = document.getElementById("loading-spinner")
 const onGoing = document.getElementById("onGoing-id")
+const calendarEl = document.getElementById('calendar');
+const panel = document.getElementById("event-list-panel")
 
 
 
@@ -19,6 +21,24 @@ let filteredEvents =[]
 let copyFilter = []
 let PageEventList = []
 const today = new Date()
+
+document.addEventListener('DOMContentLoaded',  ()=> {
+        // const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: [
+            { title: '테스트 일정', start: '2025-06-01' },
+        ],
+
+
+         dateClick: (info) =>{ // info 객체는 클릭된 날짜 정보 등을 포함
+                // info.dateStr: 클릭한 날짜 (YYYY-MM-DD 형식 문자열)
+                renderEventListPanel(info.dateStr); // 클릭된 날짜로 오른쪽 이벤트 리스트 패널 업데이트
+            },
+        });
+        calendar.render();
+    });
+
 
 
 const showSpinner = () => {
@@ -66,7 +86,13 @@ const getPage = (list, page) =>{
 
 window.searchKeyword = () => {
     let keyword = searchInput.value.trim()
-    copyFilter = filteredEvents.filter((item)=>item.TITLE.includes(keyword))
+     let todayStr = new Date(formatDateToYMD(today));
+    copyFilter = sortEventDate(
+        copyCulturalItems.filter((items) =>
+            items.TITLE.includes(keyword) &&
+            new Date(formatDateToYMD(items.END_DATE)) >= todayStr
+        )
+    );
     page = 1
      if (copyFilter.length == 0) {
             renderError(`"${keyword}" 에 대한 검색 결과가 없습니다.`)
@@ -134,6 +160,80 @@ const formatDateWithDay = (datetimeStr) => {
   const dayName = days[dateObj.getDay()];
   return `${year}.${month}.${day} (${dayName})`;
 };
+
+
+// Helper: format date to YYYY-MM-DD
+// 다양한 날짜 형식 문자열을 'YYYY-MM-DD' 형식으로 통일하는 헬퍼 함수
+// - 'YYYY-MM-DD' 형식이면 그대로 반환
+// - 'YYYYMMDD' 형식이면 변환하여 반환
+// - 그 외 형식은 Date 객체로 변환 후 'YYYY-MM-DD'로 반환
+const formatDateToYMD = (dateStr) => {
+    if (/\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr;
+    if (/\d{8}/.test(dateStr)) {
+        return dateStr.slice(0,4) + '-' + dateStr.slice(4,6) + '-' + dateStr.slice(6,8);
+    }
+    return new Date(dateStr).toISOString().slice(0,10);
+}
+
+
+
+
+const renderEventListPanel = (clickedDate) => {
+    console.log("hello",clickedDate)
+
+    // 아래 처럼 하면 오늘 끝나는 이벤트도 나온다 
+
+    const clickedYMD = formatDateToYMD(clickedDate);
+    culturalItems = culturalItems.sort((a,b)=>new Date(a.END_DATE) - new Date(b.END_DATE))
+    const todayYMD = formatDateToYMD(today);
+
+    const events = culturalItems.filter(item => {
+        const start = formatDateToYMD(item.STRTDATE);
+        const end = formatDateToYMD(item.END_DATE);
+
+        return start <= clickedYMD && end >= todayYMD;
+    
+// 오늘 끝나는 이벤트는 표시가 안됨
+    // const target = new Date(formatDateToYMD(clickedDate));
+    // culturalItems = culturalItems.sort((a,b)=>new Date(a.END_DATE) - new Date(b.END_DATE))
+    // const events = culturalItems.filter(item => {
+    //     const start = new Date(formatDateToYMD(item.STRTDATE));
+    //     const end = new Date(formatDateToYMD(item.END_DATE));
+    //     const todayStr = new Date(formatDateToYMD(today));
+        // return start <= target && end >= todayStr;
+    });
+
+    
+    let html = `
+        <div class="event-list-header">
+            <h3>${formatDateWithDay(clickedDate)} 일정</h3>
+            <p class="event-count">총 ${events.length}개의 이벤트</p>
+        </div>`;
+
+    if (!events.length) {
+        html += '<div class="no-events">이 날짜에는 예정된 이벤트가 없습니다.</div>';
+    } else {
+        html += '<div class="event-list">';
+        events.forEach(item => {
+            html += `
+                <div class="event-item">
+                    <div class="event-header"><span class="event-emoji">🟩</span><h4>${item.TITLE}</h4></div>
+                    <div class="event-details">
+                        <p><i class="fas fa-map-marker-alt"></i> ${item.PLACE}</p>
+                        <p><i class="fas fa-clock"></i> ${formatDateWithDay(item.STRTDATE)} ~ ${formatDateWithDay(item.END_DATE)}</p>
+                        ${item.USE_FEE ? `<p><i class="fas fa-ticket-alt"></i> ${item.USE_FEE}</p>` : ''}
+                    </div>
+                    <a href="${item.ORG_LINK}" class="event-link" target="_blank"><i class="fas fa-external-link-alt"></i> 자세히 보기</a>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    // 생성된 HTML을 패널 요소에 삽입
+    if (panel) panel.innerHTML = html;
+    else console.error('event-list-panel DOM not found!'); // 패널 요소가 없으면 오류 기록
+}
+
 
 
 
