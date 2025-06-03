@@ -54,6 +54,9 @@ const showSpinner = () => {
         spinner.style.display = "block"
         content.classList.remove("fade-in")
         content.classList.add("fade-out")
+         // 🔽 달력과 패널 숨기기
+        document.getElementById("calendar").style.display = "none";
+        document.getElementById("event-list-panel").style.display = "none";
     }
 }
 
@@ -62,6 +65,9 @@ const hideSpinner = () => {
         spinner.style.display = "none"
         content.classList.remove("fade-out")
         content.classList.add("fade-in")
+          // 🔽 달력과 패널 다시 보이게
+        document.getElementById("calendar").style.display = "block";
+        document.getElementById("event-list-panel").style.display = "block";
     }
 }
 
