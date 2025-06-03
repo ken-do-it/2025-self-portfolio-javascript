@@ -21,15 +21,22 @@ let filteredEvents =[]
 let copyFilter = []
 let PageEventList = []
 const today = new Date()
+let calendar; // 🔥 전역 선언
 
 document.addEventListener('DOMContentLoaded',  ()=> {
         // const calendarEl = document.getElementById('calendar');
-        const calendar = new FullCalendar.Calendar(calendarEl, {
+        calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        events: [
-            { title: '테스트 일정', start: '2025-06-01' },
-        ],
+        aspectRatio: 1.4,           // 일정한 비율 유지
+        contentHeight: 'auto',      // 자동 높이
+        fixedWeekCount: false,      // 마지막 주 숨김 가능
+        events: [], // 초기엔 비워둠
 
+        eventContent: function (arg) {
+        return {
+            html: '<div class="dot-marker"></div>'
+        };
+        },
 
          dateClick: (info) =>{ // info 객체는 클릭된 날짜 정보 등을 포함
                 // info.dateStr: 클릭한 날짜 (YYYY-MM-DD 형식 문자열)
@@ -37,6 +44,7 @@ document.addEventListener('DOMContentLoaded',  ()=> {
             },
         });
         calendar.render();
+         syncPanelHeight();
     });
 
 
@@ -124,7 +132,7 @@ const getCulturalEvent = async () => {
     showSpinner()
     try {
     //     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-    // const response = await fetch(url)
+    //     const response = await fetch(url)
 
 
     //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
@@ -141,6 +149,27 @@ const getCulturalEvent = async () => {
 
     renderEvent()
     renderPagination()
+    hideSpinner()
+     // ✅ 날짜별로 중복 없이 한 건씩만 이벤트 생성
+        const eventDateMap = {};
+           // ✅ FullCalendar에 이벤트 점 추가 (●)
+        culturalItems.forEach(item => {
+        const dateStr = formatDateToYMD(item.STRTDATE);
+        if (!eventDateMap[dateStr]) {
+            eventDateMap[dateStr] = {
+            title: '이벤트 있음',
+            start: dateStr,
+            allDay: true
+            };
+        }
+        });
+
+        // ✅ 값을 배열로 변환
+        const eventDots = Object.values(eventDateMap);
+
+        // 캘린더에 추가
+        calendar.removeAllEventSources();  // 혹시 중복 방지
+        calendar.addEventSource(eventDots);
     } catch (error) {
         renderError(error.message)
         console.error("데이터 불러오기 실패:", error);
@@ -150,6 +179,27 @@ const getCulturalEvent = async () => {
     }
 }   
 
+
+
+
+
+// ===============================
+// 4. 달력-패널 높이 동기화
+// ===============================
+// 달력의 실제 높이에 맞춰 오른쪽 패널 높이 동기화 함수
+// 두 요소의 높이를 일치시켜 시각적 정렬 유지
+function syncPanelHeight() {
+    const cal = document.getElementById('calendar'); // 캘린더 DOM 요소
+    const panel = document.getElementById('event-list-panel'); // 패널 DOM 요소
+    // 두 요소 모두 존재할 경우 높이 동기화
+    if (cal && panel) {
+        const calHeight = cal.getBoundingClientRect().height; // 캘린더 요소의 실제 높이 측정
+        panel.style.height = calHeight + 'px'; // 패널의 높이를 캘린더 높이와 같게 설정
+    }
+}
+// 달력 렌더 후, 윈도우 리사이즈 시에도 동기화
+// 윈도우 크기 변경 시 syncPanelHeight 함수를 호출하여 패널 높이를 다시 맞춤
+window.addEventListener('resize', syncPanelHeight);
 
 
 // 날짜 포맷 + 요일
@@ -216,7 +266,7 @@ const renderEventListPanel = (clickedDate) => {
         html += '<div class="event-list">';
         events.forEach(item => {
             html += `
-                <div class="event-item">
+                <div class="event-item border">
                     <div class="event-header"><span class="event-emoji">🟩</span><h4>${item.TITLE}</h4></div>
                     <div class="event-details">
                         <p><i class="fas fa-map-marker-alt"></i> ${item.PLACE}</p>
@@ -230,8 +280,24 @@ const renderEventListPanel = (clickedDate) => {
         html += '</div>';
     }
     // 생성된 HTML을 패널 요소에 삽입
-    if (panel) panel.innerHTML = html;
-    else console.error('event-list-panel DOM not found!'); // 패널 요소가 없으면 오류 기록
+    if (panel) {
+         // panel.innerHTML = html;
+        panel.scrollTop = 0;
+        // 페이드 효과 적용
+        panel.classList.remove('show');
+        panel.classList.add('fade-transition'); // 애니메이션 클래스 부여
+
+        // 패널 내용 교체
+        panel.innerHTML = html;
+
+        // 스크롤 맨 위로 이동 (부드럽게)
+        panel.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // 약간의 시간 후 show 클래스 추가 → 페이드 인
+        setTimeout(() => {
+            panel.classList.add('show');
+        }, 50);
+    } else {console.error('event-list-panel DOM not found!')} // 패널 요소가 없으면 오류 기록
 }
 
 
