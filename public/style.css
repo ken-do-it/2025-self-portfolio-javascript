@@ -9,6 +9,10 @@
 }
 
 
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
 .main-head {
     background-color: rgb(95, 95, 95);
     height: 15rem;
@@ -83,6 +87,8 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
   max-width: 300px;
+  background-color: #fff;
+
 }
 
 .card:hover {
@@ -99,6 +105,20 @@
 
 .card-body {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+
+.card-body p {
+  flex-grow: 1; /* 중간 텍스트가 여유 공간 채우게 */
+  margin-bottom: 0.5rem;
+}
+
+.card-body .btn {
+  margin-top: auto;
 }
 
 .card-title {
@@ -217,7 +237,7 @@ footer {
 /* Event List Panel */
 #event-list-panel {
   background: white;
-  padding: 1.5rem;
+  /* padding: 1.5rem; */
   border-radius: 10px;
   box-shadow: var(--card-shadow);
   min-height: 400px;
@@ -292,4 +312,26 @@ footer {
 
 .event-item {
   padding: 15px;
+}
+
+
+
+.event-list-header {
+  position: sticky;
+  top: 0;
+  background-color: #dee2e6;
+  padding: 1rem 1rem 0.5rem;
+  z-index: 10;
+  border-bottom: 1px solid #ccc;
+}
+
+
+.filter-group .btn {
+  min-width: 100px;
+}
+
+.filter-group .btn.active {
+  background-color: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
 }

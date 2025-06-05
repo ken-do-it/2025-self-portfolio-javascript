@@ -74,7 +74,7 @@ const hideSpinner = () => {
 //totalResults
 let totalResults = 0
 //pageSize= 9
-const pageSize = 9
+const pageSize = 12
 //totalPage
 let totalPage = 0
 //page
@@ -137,8 +137,8 @@ onGoing.addEventListener("click", inProgress)
 const getCulturalEvent = async () => {
     showSpinner()
     try {
-    //     let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-    //     const response = await fetch(url)
+        // let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+        // const response = await fetch(url)
 
 
     //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
@@ -231,6 +231,35 @@ const formatDateToYMD = (dateStr) => {
     return new Date(dateStr).toISOString().slice(0,10);
 }
 
+
+
+
+const filterByCategory = (category) => {
+     document.querySelectorAll('.filter-group .btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.innerText === category) {
+      btn.classList.add('active');
+    }
+  });
+  if (category === '전체') {
+    copyFilter = sortEventDate(filterUpComingEvents(culturalItems));
+  } else {
+    copyFilter = sortEventDate(
+      filterUpComingEvents(culturalItems).filter(
+        (item) => item.CODENAME.includes(category)
+      )
+    );
+  }
+
+  if (copyFilter.length === 0) {
+    renderError(`"${category}"에 해당하는 이벤트가 없습니다`);
+    return;
+  }
+
+  page = 1;
+  renderEvent();
+  renderPagination();
+};
 
 
 
