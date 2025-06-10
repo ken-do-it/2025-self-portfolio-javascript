@@ -60,13 +60,13 @@
               <a class="nav-link" href="#">캘린더</a>
             </li> -->
 
-            <section class="container text-center my-4">
-              <div class="btn-group filter-group" role="group" aria-label="이벤트 필터">
+            <section class="btn-group container text-center my-4">
+              <div class=" filter-group"  aria-label="이벤트 필터">
                 <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('전체')">전체</button>
                 <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('전시')">전시</button>
                 <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('공연')">공연</button>
                 <button type="button" class="btn btn-outline-primary" onclick="filterByCategory('행사')">행사</button>
-                <button class="btn btn-outline-primary" id="onGoing-id">진행중</button>
+                <button type="button"class="btn btn-outline-primary" id="onGoing-id">진행중</button>
               </div>
             </section>
             <!-- <div class="btn-group" role="group">
@@ -118,7 +118,7 @@
             <!-- GPT onclick 보다는 main에서 document로 불러오는걸 추천 -->
             <button
               id="search-button"
-              class="btn btn-outline-success"
+              class="btn btn-outline-primary"
               type="button"
               onclick="searchKeyword()"
             >
@@ -155,7 +155,7 @@
 
           <!-- 캘린더  -->
         <div class="row gx-2 main-content-wrapper" >
-          <div class="col-lg-4 col-md-12">
+          <div class="col-lg-4 col-md-12" style="display: flex; justify-content: center;">
             <div id="calendar" style="margin: 50px 0;"></div>
           </div>
           <div class="col-lg-8 col-md-12">
