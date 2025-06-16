@@ -374,7 +374,7 @@ body {
 
 /* Loading Spinner */
 #loading-spinner {
-    margin: 3rem 0;
+    margin: 9rem 0 !important;
     text-align: center;
 }
 

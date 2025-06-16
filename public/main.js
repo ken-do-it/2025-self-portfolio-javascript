@@ -226,7 +226,7 @@ const getCulturalEvent =async ()=>{
         //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
         const response = await fetch('/api/getEvents');  
         //-----------------------------------
-                     // 데이터 fetch
+        // 데이터 fetch
         const data = await response.json()                       // JSON 파싱
         culturalItems = data.culturalEventInfo.row               // 전체 데이터 저장
         copyCulturalItems = [...culturalItems]                   // 복사본 저장
