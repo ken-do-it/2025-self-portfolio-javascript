@@ -120,6 +120,13 @@ const sortEventDate = (items) =>{
     return items.sort((a,b)=> new Date(a.STRTDATE) - new Date(b.STRTDATE))
 }
 
+// 이벤트 끝나는 날 기준 오름차순 정렬
+const sortEventEndDate = (items) =>{
+    return items.sort((a,b)=> new Date(a.END_DATE) - new Date(b.END_DATE)) // 날짜 차이로 정렬
+}
+
+
+
 // 페이지별로 데이터를 잘라서 반환하는 함수
 const getPage = (list,page) =>{
     const start = (page-1)*pageSize             // 시작 인덱스 계산
@@ -270,7 +277,14 @@ const getCulturalEvent =async ()=>{
 const inProgress = () =>{
     console.log("inprogress")
     // 종료일이 오늘 이후인 데이터만
-    filteredEventItems = sortEventDate(copyCulturalItems.filter((item)=>new Date(item.END_DATE)>= today))
+    // filteredEventItems = sortEventDate(copyCulturalItems.filter((item)=>new Date(item.END_DATE)>= today))
+
+    filteredEventItems = sortEventEndDate(copyCulturalItems.filter((item)=>new Date(item.END_DATE)>= today))
+
+    
+    totalResults = filteredEventItems.length;
+
+    page = 1
     renderEvent()
     renderPagination()
 }
