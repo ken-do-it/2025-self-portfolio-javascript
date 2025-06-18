@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <meta name="google-site-name" content="HiKen.org">
+
     <!-- favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BCTQ8S7EFM"></script>
@@ -45,23 +48,14 @@
       integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
       crossorigin="anonymous"
     />
-    <!-- 오리지널 스타일 -->
-    <!-- <link rel="stylesheet" href="style.css" /> -->
 
-    <!-- claude 스타일 -->
-      <!-- <link rel="stylesheet" href="claude-style.css"> -->
-
-      <!-- 두개 다 믹스 스타일  -->
-      <!-- <link rel="stylesheet" href="style-copy-claude.css"> -->
-
-
-    <!--  GPT 병합 -->
     <link rel="stylesheet" href="style.css">
 
     <title>Hiken - 나의 프로젝트 소개</title>
 
 
-    <meta name="description" content="Hiken.org 개인 프로젝트, 개발 블로그, 서울 문화 소개 포트폴리오 사이트입니다.">
+    <meta name="description" content="Hiken.org 2025 서울의 문화행사, 축제 일정 한눈에 보기. 금천하모니축제, 서울라이트, 한강 빛섬축제 등 다양한 서울 문화행사 안내.
+    개인 프로젝트, 개발 블로그 사이트입니다.">
     <meta name="robots" content="index, follow">
 
       <!-- Open Graph (SNS 공유 최적화) -->
@@ -69,11 +63,7 @@
     <meta property="og:description" content="나의 개발 프로젝트와 포트폴리오">
     <meta property="og:url" content="https://hiken.org">
     <meta property="og:type" content="website">
-
-
-
-
-      
+    <meta property="og:site_name" content="HiKen.org">
 
   </head>
 
@@ -95,13 +85,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <!-- <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#"onClick="window.location.reload()" >이벤트</a>
-            </li> -->
-            <!-- <li class="nav-item">
-              <a class="nav-link" href="#">캘린더</a>
-            </li> -->
-
+          
             <section class="btn-group container text-center my-4">
               <div class=" filter-group"  aria-label="이벤트 필터">
                 <button type="button" class="btn btn-outline-primary filter-btn" onclick="filterByCategory('전체')">전체</button>
@@ -111,40 +95,8 @@
                 <button type="button"class="btn btn-outline-primary filter-btn" id="onGoing-id">진행중</button>
               </div>
             </section>
-            <!-- <div class="btn-group" role="group">
-                <button class="btn btn-outline-primary" onClick="window.location.reload()">전체</button>
-                <button class="btn btn-outline-primary">전시</button>
-                <button class="btn btn-outline-primary">공연</button>
-                <button class="btn btn-outline-primary" id="onGoing-id">진행중</button>
-              </div> -->
+            
 
-
-
-            <!-- <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Dropdown
-              </a>
-              
-
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a id="onGoing-id" class="dropdown-item" href="#">진행중</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </li>
-              </ul>
-
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-            </li> -->
           </ul>
 
           
@@ -167,7 +119,7 @@
               Search
             </button>
 
-            <!-- <button id="search-button" class="btn btn-outline-success" type="button">Search</button> -->
+
           </form>
         </div>
       </div>
@@ -175,14 +127,6 @@
 
     <main class="container">
 
-
-      <!-- <section class="container text-center">
-        <section class="main-head">
-          <div>
-            <h1>서울의 문화를 만나다</h1>
-            <h3>Discover the vibrant cultural events of Seoul</h3>
-          </div>
-        </section> -->
 
 
           <!-- 로딩 스피너 -->
@@ -204,15 +148,6 @@
             <div id="event-list-panel" class="text-start" style="margin: 50px 0;"></div>
           </div>
         </div>
-
-        <!-- <div class="row gx-2 main-content-wrapper">
-          <div class="col-lg-4 col-md-12">
-            <div id="calendar" style="margin: 50px 0;"></div>
-          </div>
-          <div class="col-lg-8 col-md-12 ">
-            <div id="event-list-panel" class="text-start" style="margin: 50px 0;"></div>
-          </div>
-        </div> -->
 
 
 
@@ -240,10 +175,6 @@
                     </div> -->
           </div>
         </section>
-
-        <!-- <section>
-          <div><h1  class="text-center">캘린더</h1></div>
-        </section> -->
 
 
 
