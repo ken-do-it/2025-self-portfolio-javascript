@@ -194,8 +194,8 @@ body {
     border-radius: 16px;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
-    min-height: 403px;
-    max-height: 403px;
+    min-height: 380px;
+    max-height: 380px;
     overflow-y: auto;
     margin-top: 1rem;
     display: flex;
