@@ -355,6 +355,12 @@ const renderEventListPanel = (clickedDate) => {
 // ===================== 메인 카드(리스트) 렌더링 ====================
 
 const renderEvent = () =>{
+
+       // 페이드 아웃 먼저
+    content.classList.remove("fade-in");
+    content.classList.add("fade-out");
+
+    setTimeout(() =>{
     pageEvent = getPage(filteredEventItems, page)               // 현재 페이지 데이터 슬라이싱
     const culturalEventHTML = pageEvent.map((eItems)=>
         `<div class="card col-lg-3 col-md-6 col-sm-12" >
@@ -369,6 +375,11 @@ const renderEvent = () =>{
         </div>`
     ).join('');
     content.innerHTML = culturalEventHTML;                    // 결과를 DOM에 출력
+
+      // 페이드 인
+        content.classList.remove("fade-out");
+        content.classList.add("fade-in");
+    }, 200);  // 200ms 동안 페이드 아웃 후 렌더링
 }
 
 // ===================== 페이지네이션 ====================
@@ -405,6 +416,12 @@ const moveToPage = (pageNum)=>{
     page = pageNum
     renderEvent()
     renderPagination()
+
+    // 페이지 이동 후 화면을 맨 위로 부드럽게 스크롤
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 // ===================== 에러 메시지 ====================
