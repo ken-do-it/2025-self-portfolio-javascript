@@ -252,12 +252,12 @@ const filterByCategory = (category) => {
 const getCulturalEvent =async ()=>{
     showSpinner()                                                // 로딩 시작
     try {
-         let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-        const response = await fetch(url)
+        //  let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+        // const response = await fetch(url)
 
 
         //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
-        // const response = await fetch('/api/getEvents');  
+        const response = await fetch('/api/getEvents');  
         //-----------------------------------
         // 데이터 fetch
         const data = await response.json()                       // JSON 파싱
