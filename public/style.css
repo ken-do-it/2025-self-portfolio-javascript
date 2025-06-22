@@ -53,86 +53,87 @@ body {
 
 /* Modern Navigation */
 .navbar {
-  background: var(--bg-white) !important;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  max-height: 5rem;
-  position: fixed;
-  top: 0;
-  /* padding: 0px 5rem; */
-  width: 100%;
-  z-index: 1000;
-  /* padding: 1rem 0; */
+    background: var(--bg-white) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    max-height: 5rem;
+    position: fixed;
+    top: 0;
+    /* padding: 0px 5rem; */
+    width: 100%;
+    z-index: 1000;
+    /* padding: 1rem 0; */
 }
 
 .navbar-brand {
-  font-weight: 700;
-  font-size: 1.5rem;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-decoration: none !important;
+    padding: 0px 2rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none !important;
 }
 
 .navbar-toggler {
-  border: none;
-  padding: 0.25rem 0.5rem;
+    border: none;
+    padding: 0.25rem 0.5rem;
 }
 
 .navbar-toggler:focus {
-  box-shadow: none;
+    box-shadow: none;
 }
 
 .filter-btn {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-weight: 500;
-  margin: 0 0.25rem 0.5rem 0;
-  transition: all 0.3s ease;
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 500;
+    margin: 0 0.25rem 0.5rem 0;
+    transition: all 0.3s ease;
 }
 
 .filter-btn:hover {
-  background: var(--gradient-secondary);
-  color: white;
+    background: var(--gradient-secondary);
+    color: white;
 }
 
 /* fullcalendar today, prev/next 버튼 스타일 */
 .fc-button {
-  background: var(--gradient-primary) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 50px !important;
-  padding: 0.25rem 1rem !important;
-  font-weight: 500;
-  transition: all 0.3s ease;
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50px !important;
+    padding: 0.25rem 1rem !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .fc-button:hover {
-  background: var(--gradient-secondary) !important;
-  color: white !important;
-  transform: translateY(-1px);
+    background: var(--gradient-secondary) !important;
+    color: white !important;
+    transform: translateY(-1px);
 }
 
 /* 검색 버튼 (Search)도 동일한 스타일 적용 */
 .search-btn {
-  background: var(--gradient-primary);
-  border: none;
-  border-radius: 50px;
-  padding: 0.5rem 1.25rem;
-  color: white;
-  font-weight: 500;
-  transition: all 0.3s ease;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 50px;
+    padding: 0.5rem 1.25rem;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .search-btn:hover {
-  background: var(--gradient-secondary);
-  color: white;
-  transform: translateY(-1px);
+    background: var(--gradient-secondary);
+    color: white;
+    transform: translateY(-1px);
 }
 
 
@@ -148,16 +149,16 @@ body {
 
 
 .custom-menu { 
-  width: 100%;
-  background: var(--bg-white);
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  top: 0;
-  left: 0;
-  transition: max-height 0.1s ease;
-  overflow: hidden;
-  max-height: 0;
-  z-index: 999; 
+    width: 100%;
+    background: var(--bg-white);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    top: 0;
+    left: 0;
+    transition: max-height 0.1s ease;
+    overflow: hidden;
+    max-height: 0;
+    z-index: 999; 
 }
 
 .container-fluid {
@@ -192,15 +193,15 @@ body {
 
 /* 햄버거 메뉴가 열릴 때 배경색 줄 영역 */
 .navbar-expanded .custom-menu {
-  background-color: var(--bg-white);
-  box-shadow: var(--shadow-md);
-  transition: background-color 0.5s ease;
+    background-color: var(--bg-white);
+    box-shadow: var(--shadow-md);
+    transition: background-color 0.5s ease;
 }
 
 /* 햄버거 열릴 때 전체 메인 콘텐츠 아래로 밀리게 */
 .navbar-expanded .main-content-wrapper {
-  margin-top: 10rem !important;
-  transition: margin-top 0.1s ease;
+    margin-top: 10rem !important;
+    transition: margin-top 0.1s ease;
 }
 
 
@@ -236,12 +237,12 @@ body {
 
 /* 캘린더 전체 스타일 */
 #calendar {
-  width: 100%;
-  max-width: 360px;
-  font-size: 0.8rem;
-  padding: 10px;
-  box-sizing: border-box;
-  margin: 30px 0px 20px 
+    width: 100%;
+    max-width: 360px;
+    font-size: 0.8rem;
+    padding: 10px;
+    box-sizing: border-box;
+    margin: 30px 0px 20px 
 }
 
 
@@ -258,7 +259,7 @@ body {
 
 /* 달력 타이틀 */
 .fc .fc-toolbar-title {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
 }
 
 
@@ -642,6 +643,12 @@ body {
     .main-content-wrapper{
         margin-top: 1rem;
     }
+
+    .container-fluid {
+        display: flex;
+        padding-left: 0;
+        padding-right: 0;
+} 
 
     #calendar {
     margin: 50px 0px -35px;
