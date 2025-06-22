@@ -11,32 +11,6 @@ const panel = document.getElementById("event-list-panel")
 // 맨 위로 이동 버튼을 가져옴
 const scrollToTopBtn = document.getElementById("scrollToTopBtn");
 
-
-document.getElementById('customMenuToggle').addEventListener('click', function() {
-  document.getElementById('customMenu').classList.toggle('show');
-
-  // 스크롤을 맨 위로 올림 (부드럽게)
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});
-
-
-document.querySelectorAll('.menu-scroll-btn').forEach(button => {
-  button.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-});
-
-
-
-// 햄버거 토글 버튼 클릭 이벤트
-document.getElementById('customMenuToggle').addEventListener('click', () => {
-  document.body.classList.toggle('navbar-expanded');
-});
-
-
 // 카테고리별 분류 기준을 담은 객체
 const categoryMap = {
   '공연': ['연극', '클래식', '뮤지컬', '국악', '콘서트', '무용'], // 공연 키워드
@@ -252,12 +226,12 @@ const filterByCategory = (category) => {
 const getCulturalEvent =async ()=>{
     showSpinner()                                                // 로딩 시작
     try {
-         let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
-        const response = await fetch(url)
+        //  let url = new URL(`http://openapi.seoul.go.kr:8088/${API_KEY}/json/culturalEventInfo/1/1000/`)
+        // const response = await fetch(url)
 
 
         //-------------------------- 이 아래 부분 vercel 배포 시 주석 해제 
-        // const response = await fetch('/api/getEvents');  
+        const response = await fetch('/api/getEvents');  
         //-----------------------------------
         // 데이터 fetch
         const data = await response.json()                       // JSON 파싱
