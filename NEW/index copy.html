@@ -72,11 +72,7 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary container-fluid">
       <div class="container-fluid">
         <a class="navbar-brand" href="#" onClick="window.location.reload()">서울 문화 이벤트</a>
-        <button class="navbar-toggler" type="button" id="customMenuToggle">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- <button
+        <button
           class="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -86,52 +82,9 @@
           aria-label="Toggle navigation"
         >
           <span class="navbar-toggler-icon"></span>
-        </button> -->
-
-
-
-                 <!-- PC버전: 기본 부트스트랩 nav collapse -->
-        <div class="collapse navbar-collapse d-none d-lg-block" id="navbarSupportedContent">
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('전체')">전체</button>
-            </li>
-            <li class="nav-item">
-              <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('전시')">전시</button>
-            </li>
-            <li class="nav-item">
-              <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('공연')">공연</button>
-            </li>
-            <li class="nav-item">
-              <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('행사')">행사</button>
-            </li>
-            <li class="nav-item">
-              <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" id="onGoing-id">진행중</button>
-            </li>
-          </ul>
-
-          <form class="d-flex" role="search" onsubmit="return false;">
-            <input class="form-control me-2" type="search" placeholder="Search" id="search-input" />
-            <button id="search-button" class="btn btn-outline-primary search-btn" type="button" onclick="searchKeyword()">Search</button>
-          </form>
-        </div>
-
-        <!-- 모바일 custom 메뉴 -->
-        <div class="custom-menu d-lg-none" id="customMenu">
-          <div class="filter-group text-center my-3">
-            <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('전체')">전체</button>
-            <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('전시')">전시</button>
-            <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('공연')">공연</button>
-            <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" onclick="filterByCategory('행사')">행사</button>
-            <button type="button" class="btn btn-outline-primary filter-btn menu-scroll-btn" id="onGoing-id">진행중</button>
-          </div>
-
-
-        <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0"> -->
-
-            <!-- <div class="custom-menu" id="customMenu">
-            <ul class="filter-wrapper navbar-nav me-auto mb-2 mb-lg-0">
           
             <section class="btn-group container text-center my-4">
               <div class=" filter-group"  aria-label="이벤트 필터">
@@ -141,7 +94,7 @@
                 <button type="button" class="btn btn-outline-primary filter-btn" onclick="filterByCategory('행사')">행사</button>
                 <button type="button"class="btn btn-outline-primary filter-btn" id="onGoing-id">진행중</button>
               </div>
-            </section> -->
+            </section>
             
 
           </ul>

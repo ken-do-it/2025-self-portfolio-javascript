@@ -11,32 +11,6 @@ const panel = document.getElementById("event-list-panel")
 // 맨 위로 이동 버튼을 가져옴
 const scrollToTopBtn = document.getElementById("scrollToTopBtn");
 
-
-document.getElementById('customMenuToggle').addEventListener('click', function() {
-  document.getElementById('customMenu').classList.toggle('show');
-
-  // 스크롤을 맨 위로 올림 (부드럽게)
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});
-
-
-document.querySelectorAll('.menu-scroll-btn').forEach(button => {
-  button.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-});
-
-
-
-// 햄버거 토글 버튼 클릭 이벤트
-document.getElementById('customMenuToggle').addEventListener('click', () => {
-  document.body.classList.toggle('navbar-expanded');
-});
-
-
 // 카테고리별 분류 기준을 담은 객체
 const categoryMap = {
   '공연': ['연극', '클래식', '뮤지컬', '국악', '콘서트', '무용'], // 공연 키워드
