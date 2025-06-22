@@ -67,7 +67,7 @@ body {
 }
 
 .navbar-brand {
-    padding: 2rem;
+    padding: 0px 2rem;
     font-weight: 700;
     font-size: 1.5rem;
     background: var(--gradient-primary);
