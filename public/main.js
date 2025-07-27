@@ -369,7 +369,7 @@ const renderEventListPanel = (clickedDate) => {
                         <p><i class="fas fa-clock"></i> ${formatDateWithDay(item.STRTDATE)} ~ ${formatDateWithDay(item.END_DATE)}</p>
                         ${item.USE_FEE ? `<p><i class="fas fa-ticket-alt"></i> ${escapeHTML(item.USE_FEE)}</p>` : ''}
                     </div>
-                    <a href="${escapeHTML(eItems.ORG_LINK)}" class="event-link" target="_blank"><i class="fas fa-external-link-alt"></i> 자세히 보기</a>
+                    <a href="${escapeHTML(item.ORG_LINK)}" class="event-link" target="_blank"><i class="fas fa-external-link-alt"></i> 자세히 보기</a>
                 </div>
             `;
         });
