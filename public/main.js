@@ -37,6 +37,19 @@ document.getElementById('customMenuToggle').addEventListener('click', () => {
 });
 
 
+// HTML 태그를 문자열로 escape 처리하는 유틸리티 함수
+const escapeHTML = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')  // & → &amp;
+    .replace(/</g, '&lt;')   // < → &lt;
+    .replace(/>/g, '&gt;')   // > → &gt;
+    .replace(/"/g, '&quot;') // " → &quot;
+    .replace(/'/g, '&#039;'); // ' → &#039;
+};
+
+
+
 // 카테고리별 분류 기준을 담은 객체
 const categoryMap = {
   '공연': ['연극', '클래식', '뮤지컬', '국악', '콘서트', '무용'], // 공연 키워드
@@ -180,7 +193,7 @@ const searchKeyword = () =>{
     totalResults = filteredEventItems.length;
 
     if (filteredEventItems.length == 0) {                // 검색 결과 없으면
-        renderError(`"${keyword}"의 검색결과가 없습니다`) // 에러 메시지
+        renderError(`"${escapeHTML(keyword)}"의 검색결과가 없습니다`) // 에러 메시지
         return
     }
     page = 1                                             // 1페이지로 초기화
@@ -350,13 +363,13 @@ const renderEventListPanel = (clickedDate) => {
         events.forEach(item => {
             html += `
                 <div class="event-item border">
-                    <div class="event-header"><span class="event-emoji">🟩</span><h4>${item.TITLE}</h4></div>
+                    <div class="event-header"><span class="event-emoji">🟩</span><h4>${escapeHTML(item.TITLE)}</h4></div>
                     <div class="event-details">
-                        <p><i class="fas fa-map-marker-alt"></i> ${item.PLACE}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> ${escapeHTML(item.PLACE)}</p>
                         <p><i class="fas fa-clock"></i> ${formatDateWithDay(item.STRTDATE)} ~ ${formatDateWithDay(item.END_DATE)}</p>
-                        ${item.USE_FEE ? `<p><i class="fas fa-ticket-alt"></i> ${item.USE_FEE}</p>` : ''}
+                        ${item.USE_FEE ? `<p><i class="fas fa-ticket-alt"></i> ${escapeHTML(item.USE_FEE)}</p>` : ''}
                     </div>
-                    <a href="${item.ORG_LINK}" class="event-link" target="_blank"><i class="fas fa-external-link-alt"></i> 자세히 보기</a>
+                    <a href="${escapeHTML(eItems.ORG_LINK)}" class="event-link" target="_blank"><i class="fas fa-external-link-alt"></i> 자세히 보기</a>
                 </div>
             `;
         });
@@ -390,13 +403,13 @@ const renderEvent = () =>{
     pageEvent = getPage(filteredEventItems, page)               // 현재 페이지 데이터 슬라이싱
     const culturalEventHTML = pageEvent.map((eItems)=>
         `<div class="card col-lg-3 col-md-6 col-sm-12" >
-            <img src="${eItems.MAIN_IMG || 'default.jpg'}" class="card-img-top" alt="이미지 없음">
+            <img src="${escapeHTML(eItems.MAIN_IMG) || 'default.jpg'}" class="card-img-top" alt="이미지 없음">
             <div class="card-body">
-                <h5 class="card-title">${eItems.TITLE}</h5>
+                <h5 class="card-title">${escapeHTML(eItems.TITLE)}</h5>
                 <p>📅 ${formatDateWithDay(eItems.STRTDATE)} ~ ${formatDateWithDay(eItems.END_DATE)}</p>
-                <p class="card-text">📍 ${eItems.PLACE}</p>
-                ${eItems.USE_FEE ? `<p>💰 ${eItems.USE_FEE}</p>` : ''}
-                <a href="${eItems.ORG_LINK}" class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer"><span>홈페이지&nbsp</span> <span>바로가기</span></a>
+                <p class="card-text">📍 ${escapeHTML(eItems.PLACE)}</p>
+                ${eItems.USE_FEE ? `<p>💰 ${escapeHTML(eItems.USE_FEE)}</p>` : ''}
+                <a href="${escapeHTML(eItems.ORG_LINK)}" class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer"><span>홈페이지&nbsp</span> <span>바로가기</span></a>
             </div>
         </div>`
     ).join('');
@@ -455,7 +468,7 @@ const moveToPage = (pageNum)=>{
 const renderError = (errorMessage) =>{
     const errorHTML = `
         <div class="alert alert-danger" role="alert">
-            ${errorMessage}
+            ${escapeHTML(errorMessage)}
         </div>`
     content.innerHTML = errorHTML
 }
