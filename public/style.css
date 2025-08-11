@@ -185,8 +185,6 @@ body {
 
 
 
-
-
 .d-flex {
     margin: 20px;
 }
@@ -199,18 +197,23 @@ body {
 }
 
 /* 햄버거 열릴 때 전체 메인 콘텐츠 아래로 밀리게 */
-.navbar-expanded .main-content-wrapper .kakao_ad_area {
+/* .navbar-expanded .main-content-wrapper .kakao_ad_area {
+    margin-top: 15rem !important;
+    transition: margin-top 0.1s ease;
+} */
+
+/* 햄버거 열릴 때 전체 메인 콘텐츠 아래로 밀리게 */
+.navbar-expanded .kakao_ad_area {
     margin-top: 10rem !important;
     transition: margin-top 0.1s ease;
 }
+
 
 
 .main-content-wrapper {
   /* margin-top: 5rem;  기본 위치 */
   transition: margin-top 0.2s ease;  /* 항상 transition 적용 */
 }
-
-
 
 
 
@@ -228,11 +231,6 @@ body {
     justify-content: center;
     align-items: center;
 }
-
-
-
-
-
 
 
 /* 캘린더 전체 스타일 */
@@ -681,7 +679,7 @@ body {
   }
 
 
-  .main-content-wrapper{
+  .main-content-wrapper .kakao_ad_area{
     margin-top: 1rem;
   }
   .calendar-section {
