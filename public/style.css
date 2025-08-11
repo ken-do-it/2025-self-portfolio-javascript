@@ -206,7 +206,7 @@ body {
 
 
 .main-content-wrapper {
-  margin-top: 5rem;  /* 기본 위치 */
+  /* margin-top: 5rem;  기본 위치 */
   transition: margin-top 0.2s ease;  /* 항상 transition 적용 */
 }
 
