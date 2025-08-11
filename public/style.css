@@ -190,7 +190,7 @@ body {
 }
 
 /* 햄버거 메뉴가 열릴 때 배경색 줄 영역 */
-.navbar-expanded .custom-menu {
+.navbar-expanded .custom-menu .kakao_ad_area{
     background-color: var(--bg-white);
     box-shadow: var(--shadow-md);
     transition: background-color 0.5s ease;
@@ -210,7 +210,7 @@ body {
 
 
 
-.main-content-wrapper {
+.main-content-wrapper .kakao_ad_area  {
   /* margin-top: 5rem;  기본 위치 */
   transition: margin-top 0.2s ease;  /* 항상 transition 적용 */
 }
@@ -638,7 +638,7 @@ body {
 /* 기존 내용 유지 및 수정 적용 (style-copy-claude 기준 반영) */
 
 @media (max-width: 1024px) {
-    .main-content-wrapper{
+    .main-content-wrapper .kakao_ad_area{
         margin-top: 1rem;
     }
 
@@ -679,7 +679,7 @@ body {
   }
 
 
-  .main-content-wrapper .kakao_ad_area{
+  .main-content-wrapper .kakao_ad_area {
     margin-top: 1rem;
   }
   .calendar-section {
