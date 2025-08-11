@@ -199,7 +199,7 @@ body {
 }
 
 /* 햄버거 열릴 때 전체 메인 콘텐츠 아래로 밀리게 */
-.navbar-expanded .main-content-wrapper {
+.navbar-expanded .main-content-wrapper .kakao_ad_area {
     margin-top: 10rem !important;
     transition: margin-top 0.1s ease;
 }
@@ -217,10 +217,10 @@ body {
 .custom-menu.show {
   max-height: 500px;  /* 메뉴 높이 충분히 확보 */
 }
-
+/* 
 .main-content-wrapper{
     margin: 5rem 2rem 0;
-}
+} */
 
 .filter-wrapper {
     width: 100%;
