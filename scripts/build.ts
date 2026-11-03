@@ -1,0 +1,10 @@
+import { build } from 'esbuild';
+import { cp, mkdir, readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+await mkdir('dist', { recursive: true });
+await cp('public', 'dist', { recursive: true });
+await build({ entryPoints: ['src/main.ts'], outfile: 'dist/main.js', bundle: true, minify: true, target: 'es2022', format: 'esm' });
+const hash = createHash('sha256');
+for (const file of ['main.js', 'style.css', 'index.html']) hash.update(await readFile(`dist/${file}`));
+await build({ entryPoints: ['src/service-worker.ts'], outfile: 'dist/service-worker.js', bundle: true, minify: true, target: 'es2022', format: 'iife', define: { BUILD_ID: JSON.stringify(hash.digest('hex').slice(0, 12)) } });
+console.log('Built dist/');

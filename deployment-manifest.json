@@ -1,0 +1,197 @@
+{
+  "deploymentId": "dpl_8SPt4mYqrovYvFHvBkaGL4raMKya",
+  "baseCommit": "375f5b2a9f0128d1e2a44f1e0e024a47c41c9e0b",
+  "dirty": true,
+  "files": [
+    {
+      "file": "src/enhancements-i18n.ts",
+      "sha": "17af4c9afef3f452415385df2a170745c0dcec99",
+      "size": 8742
+    },
+    {
+      "file": "src/events.ts",
+      "sha": "a0afbfc6770ec86234ef7a942357e4361d7bf997",
+      "size": 5080
+    },
+    {
+      "file": "src/i18n.ts",
+      "sha": "6c3dd0a81ea45acf62a61a4ff17b77e6b7dcef79",
+      "size": 8743
+    },
+    {
+      "file": "src/main.ts",
+      "sha": "c637bdf5e062bac0dd9697643bbaf9b93db928db",
+      "size": 21404
+    },
+    {
+      "file": "src/maps.ts",
+      "sha": "808eb577be936a8fbb2b21914f2eb3d19b44e9ed",
+      "size": 901
+    },
+    {
+      "file": "src/offline.ts",
+      "sha": "1d6758907c8a109c99b1552d7ba7854fc2b55a9b",
+      "size": 844
+    },
+    {
+      "file": "src/service-worker.ts",
+      "sha": "dbf03c34edf31276c0d87369bdb2bd52c5d4d9a5",
+      "size": 1048
+    },
+    {
+      "file": "server/dev.ts",
+      "sha": "65a46fa1edc25072427febb7c3c91c27b48ca2be",
+      "size": 2337
+    },
+    {
+      "file": "server/events.ts",
+      "sha": "a4c17f56df7d13c34b6e78ffb25b7c502e8c5d47",
+      "size": 3848
+    },
+    {
+      "file": "server/http.ts",
+      "sha": "864c354368885839f6f0a33bdc038ade82a9b9ad",
+      "size": 1033
+    },
+    {
+      "file": "server/storage.ts",
+      "sha": "a5d8f88937b7281d1520c9ef9da81ea7297fa73c",
+      "size": 821
+    },
+    {
+      "file": "server/translate.ts",
+      "sha": "83ae4979e8f8c3b301ee4729295330882a9ed5d2",
+      "size": 3749
+    },
+    {
+      "file": "api/getEvents.ts",
+      "sha": "93b3080867598aaa5eb5bedcc77e2e07c5468eee",
+      "size": 971
+    },
+    {
+      "file": "api/translate.ts",
+      "sha": "10c89efd19ea4c9cb9d1dc4ab3bf0ea14eb7555f",
+      "size": 1702
+    },
+    {
+      "file": "scripts/build.ts",
+      "sha": "7add8d283836be54b3c4f5e3d00fbe4b63d74ea0",
+      "size": 747
+    },
+    {
+      "file": "scripts/preview-fixture.ts",
+      "sha": "f4d24903f48e328337814081b3d9f0dddbae3978",
+      "size": 2352
+    },
+    {
+      "file": "scripts/sync-events.ts",
+      "sha": "ad5a99f3bb832653d682faad54362a7b27c30d72",
+      "size": 435
+    },
+    {
+      "file": "tests/api.test.ts",
+      "sha": "a789ef8c63e22c3cde0b6f2a699f6c960179cce0",
+      "size": 4512
+    },
+    {
+      "file": "tests/enhancements.test.ts",
+      "sha": "3961ede3251449a496ad5c541ebe016167e92d9c",
+      "size": 2006
+    },
+    {
+      "file": "tests/events.test.ts",
+      "sha": "4e52d703f99511eebe4afdb253151f0081d63efe",
+      "size": 3283
+    },
+    {
+      "file": "public/favicon-16x16.png",
+      "sha": "90886d8623ad994df2c34b14a16ff41e9eea2be3",
+      "size": 693
+    },
+    {
+      "file": "public/favicon-32x32.png",
+      "sha": "814686fcdd059044fb26e76777fa73eb5da71e96",
+      "size": 1888
+    },
+    {
+      "file": "public/index.html",
+      "sha": "7c1f0b5e9e8a973705fa10844b9d0b9c99080145",
+      "size": 865
+    },
+    {
+      "file": "public/robots.txt",
+      "sha": "a1f1e9eeee7ce17f6853b0c897b0064489aec2bb",
+      "size": 65
+    },
+    {
+      "file": "public/sitemap.xml",
+      "sha": "faa38ead3d61f3c7fee27408d1c6dbddc5601a19",
+      "size": 453
+    },
+    {
+      "file": "public/style.css",
+      "sha": "46ff678459d22455152362be0d62ff3a1ec51c85",
+      "size": 20090
+    },
+    {
+      "file": "public/favicon_io/android-chrome-192x192.png",
+      "sha": "dd9e003b7ca852c3e1a5ecdb0b0120131e42519d",
+      "size": 32620
+    },
+    {
+      "file": "public/favicon_io/android-chrome-512x512.png",
+      "sha": "00e702d3b7ada18a0ac74c018e0bb09f312cb5f4",
+      "size": 281175
+    },
+    {
+      "file": "public/favicon_io/apple-touch-icon.png",
+      "sha": "6439e6487dfab548c7d3fae8fbb8a78cfd4ae2dc",
+      "size": 30075
+    },
+    {
+      "file": "public/favicon_io/favicon-16x16.png",
+      "sha": "90886d8623ad994df2c34b14a16ff41e9eea2be3",
+      "size": 693
+    },
+    {
+      "file": "public/favicon_io/favicon-32x32.png",
+      "sha": "814686fcdd059044fb26e76777fa73eb5da71e96",
+      "size": 1888
+    },
+    {
+      "file": "public/favicon_io/favicon.ico",
+      "sha": "b0bce0a816ff5fa3d51b272c56208d0806945912",
+      "size": 15406
+    },
+    {
+      "file": "public/favicon_io/site.webmanifest",
+      "sha": "bf31baf91bdd2fcde24a45e3f2a1be33733c6f69",
+      "size": 263
+    },
+    {
+      "file": "data/events.snapshot.json",
+      "sha": "2c19cffe7f13897d57c431dca261165142aaaee6",
+      "size": 578596
+    },
+    {
+      "file": "package.json",
+      "sha": "7c0494b534aaec605c6cc95de56d57bedd608d0e",
+      "size": 624
+    },
+    {
+      "file": "package-lock.json",
+      "sha": "a8ad8176cee348ea0347684b4aeb8d88859a38ac",
+      "size": 28428
+    },
+    {
+      "file": "tsconfig.json",
+      "sha": "e2491fd33ad0269227caec88bc1f8a3ef7d33dbf",
+      "size": 404
+    },
+    {
+      "file": "vercel.json",
+      "sha": "2cef353e3b8b35da8d49e23377c03afe01dd264d",
+      "size": 759
+    }
+  ]
+}

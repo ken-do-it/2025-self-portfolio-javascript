@@ -1,3 +1,21 @@
 {
-  "type": "module"
+  "name": "hiken-seoul-culture",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "dev": "npm run build && node server/dev.ts",
+    "start": "node server/dev.ts",
+    "build": "npm run typecheck && node scripts/build.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.ts",
+    "preview:fixture": "npm run build && node scripts/preview-fixture.ts",
+    "sync:data": "node scripts/sync-events.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
 }
