@@ -13,6 +13,7 @@ const server = createServer(async (req, res) => {
   res.setHeader('Referrer-Policy', 'no-referrer');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   const path = new URL(req.url || '/', 'http://localhost').pathname;
+  if (path === '/' || path === '/index.html') res.setHeader('Cache-Control', 'public, no-cache, max-age=0, must-revalidate, no-transform');
   if (path === '/api/getEvents') { await handler(req, res); return; }
   if (path === '/api/translate') { await translateHandler(req, res); return; }
   if (!['GET', 'HEAD'].includes(req.method || '')) { res.writeHead(405); res.end(); return; }

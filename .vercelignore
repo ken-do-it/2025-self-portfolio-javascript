@@ -3,9 +3,7 @@
 .git/
 .vscode/
 node_modules/
-NEW/
 config.js
 README_LATEST.md
 readme.md
-tests/
 dist/
