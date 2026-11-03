@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import handler from '../api/getEvents.ts';
 import translateHandler from '../api/translate.ts';
+import syncHandler from '../api/syncTranslations.ts';
 try { process.loadEnvFile('.env.local'); } catch { /* Environment variables also supported. */ }
 const root = resolve('dist');
 const types: Record<string, string> = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.ico': 'image/x-icon', '.txt': 'text/plain', '.xml': 'application/xml' };
@@ -16,6 +17,7 @@ const server = createServer(async (req, res) => {
   if (path === '/' || path === '/index.html') res.setHeader('Cache-Control', 'public, no-cache, max-age=0, must-revalidate, no-transform');
   if (path === '/api/getEvents') { await handler(req, res); return; }
   if (path === '/api/translate') { await translateHandler(req, res); return; }
+  if (path === '/api/syncTranslations') { await syncHandler(req, res); return; }
   if (!['GET', 'HEAD'].includes(req.method || '')) { res.writeHead(405); res.end(); return; }
   try {
     const file = resolve(root, `.${decodeURIComponent(path === '/' ? '/index.html' : path)}`);

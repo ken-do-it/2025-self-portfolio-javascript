@@ -69,3 +69,6 @@ header{background:#f8f7f3}.topbar{min-height:86px}.logo{font-size:21px;letter-sp
   .poster{height:260px}.poster img{object-fit:contain;background:#ecece4}
   .event-card h3{font-size:18px}
 }
+.translation-pending{flex-basis:100%;font-size:12px;line-height:1.65;color:var(--muted);overflow-wrap:anywhere}
+.event-card h3:lang(en),.event-card h3:lang(es){word-break:normal;overflow-wrap:anywhere}
+.event-card h3:lang(ja){word-break:normal;line-break:strict;overflow-wrap:anywhere}

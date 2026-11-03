@@ -3,6 +3,7 @@ import { normalizeRows, isCultureEvent, seoulToday } from '../src/events.ts';
 import type { CultureEvent } from '../src/events.ts';
 import { ApiError, limitedJson } from './http.ts';
 import { readCache, writeCache } from './storage.ts';
+import { databaseConfigured, databaseRpc } from './database.ts';
 export { ApiError } from './http.ts';
 export const SOURCE = 'https://data.seoul.go.kr/dataList/OA-23041/S/1/datasetView.do';
 export interface Payload { events: CultureEvent[]; updatedAt: string; partial: boolean; stale: boolean; source: string; }
@@ -53,6 +54,9 @@ export function createEventService(deps: {
 export const getEvents = createEventService({
   fetch: (...args) => fetch(...args), now: Date.now,
   read: async () => {
+    if (databaseConfigured()) {
+      try { const stored = await databaseRpc('hiken_snapshot'); if (validPayload(stored)) return stored; } catch { /* Original Seoul data remains available during DB outages. */ }
+    }
     const disk = await readCache('events'); if (validPayload(disk)) return disk;
     try { return JSON.parse(await readFile(new URL('../data/events.snapshot.json', import.meta.url), 'utf8')); } catch { return undefined; }
   },

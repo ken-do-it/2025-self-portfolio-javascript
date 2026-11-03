@@ -66,12 +66,13 @@ export function isCultureEvent(value: unknown): value is CultureEvent {
     && (e.latitude === undefined && e.longitude === undefined || Object.keys(coordinates(e.latitude, e.longitude)).length === 2);
 }
 export interface Filters { query: string; category: Category; district: string; date: string; ongoing: boolean; free: boolean; saved: boolean; }
-export function filterEvents(events: CultureEvent[], filters: Filters, saved: ReadonlySet<string>, today = seoulToday()): CultureEvent[] {
-  const q = filters.query.trim().toLocaleLowerCase();
+export function filterEvents(events: CultureEvent[], filters: Filters, saved: ReadonlySet<string>, today = seoulToday(), translated: ReadonlyMap<string, Partial<CultureEvent>> = new Map()): CultureEvent[] {
+  const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase().normalize('NFD').replace(/([a-z])\p{M}+/gu, '$1').normalize('NFC');
+  const q = normalize(filters.query.trim());
   return events.filter(e => (!filters.date ? e.end >= today : e.start <= filters.date && e.end >= filters.date)
     && (!filters.ongoing || e.start <= today && e.end >= today)
     && (filters.category === 'all' || e.category === filters.category)
     && (!filters.district || e.district === filters.district)
     && (!filters.free || e.free) && (!filters.saved || saved.has(e.id))
-    && (!q || `${e.title} ${e.place} ${e.district}`.toLocaleLowerCase().includes(q)));
+    && (!q || normalize(`${e.title} ${e.place} ${e.district} ${e.description || ''} ${translated.get(e.id)?.title || ''} ${translated.get(e.id)?.place || ''} ${translated.get(e.id)?.description || ''}`).includes(q)));
 }

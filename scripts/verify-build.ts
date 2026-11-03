@@ -8,7 +8,9 @@ assert.equal(assets.length, 2, 'HTML must reference fingerprinted JS and CSS');
 assert.ok(assets.some(url => /^\/assets\/main-[\w-]+\.js$/.test(url)));
 assert.ok(assets.some(url => /^\/assets\/style-[a-f0-9]+\.css$/.test(url)));
 for (const url of assets) {
-  assert.ok((await readFile(`dist${url}`)).length > 0, `Missing asset: ${url}`);
+  const content = await readFile(`dist${url}`, 'utf8');
+  assert.ok(content.length > 0, `Missing asset: ${url}`);
+  assert.ok(!/SUPABASE_SECRET_KEY|CRON_SECRET|sb_secret_[A-Za-z0-9_-]+|Test fixtures — not real events/.test(content), 'Server credentials or test fixtures must not enter the client bundle');
   assert.ok(worker.includes(url), `Offline cache missing ${url}`);
 }
 assert.deepEqual((await readdir('dist/assets')).sort(), assets.map(url => url.split('/').at(-1)!).sort(), 'Old bundles must not survive a build');

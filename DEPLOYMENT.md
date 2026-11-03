@@ -1,5 +1,31 @@
 # 운영 배포 기록 — 2026-11-03
 
+## 자동 번역 저장소 작업 — 아직 운영 미반영
+
+이 절은 현재 로컬 작업 상태이며 아래의 기존 운영 배포 기록과 구분합니다. 대상 조직은 사용자가 지정한 `kenjustdoit_hiken`입니다. 연결된 Supabase 도구에서 현재 이 조직이 조회되지 않아 원격 프로젝트 생성, 마이그레이션 적용, 운영 환경변수 설정 및 main 푸시를 보류했습니다. 기존 `kenjustdoit_2_app / small-steps-todo`는 사용하지 않았습니다.
+
+- 로컬 구현: 언어별 카드·상세 자동 표시, 원문 전환, 번역/한국어 동시 검색, 언어별 오프라인 저장 및 늦은 언어 응답 무시.
+- 저장소: `supabase/migrations/20261103105720_event_translations.sql`. 공개 행사 원문과 필드별 번역을 `hiken_private` 스키마에 저장. 원문 해시가 달라진 필드만 다시 번역하며, 조회 시에도 해시를 확인해 오래된 번역을 제외.
+- 보안: 모든 테이블 RLS 활성화, anon/authenticated 권한 없음. public RPC는 SECURITY INVOKER이며 service_role만 실행 가능. 서버용 secret API key만 사용하며 브라우저에는 키를 보내지 않음.
+- 작업: `/api/syncTranslations`는 32자 이상 `CRON_SECRET`의 Bearer 인증 필수. DB 잠금으로 전역 하루 4,500자 예약. 제목 우선, 동일 문구 재사용, 실패/중단 작업은 lease 만료 후 재시도. 429/공급자 한도 응답은 당일 작업 중단. 방문자의 목록/상세 요청은 저장된 번역만 읽고 번역 API를 호출하지 않음.
+- 무료 일정: Vercel Cron 매일 `15 1 * * *` UTC(한국 오전 10시대, Hobby는 정확한 분 보장 없음), 함수 300초/실제 작업 목표 240초. 한도 또는 실행시간에 도달하면 남은 작업은 다음 실행으로 이월. 전체 행사 즉시 번역을 보장하지 않음.
+- 보존: 최신 유효 스냅샷에서 사라진 행사 및 종료 30일 이전 행사는 번역과 함께 정리. 예산 이력은 30일 보관. 개인 관심 행사와 검색어는 서버 DB에 저장하지 않음.
+- 실패: DB 장애는 한국어 행사 조회를 막지 않음. 번역 오류/준비 상태를 표시. 오프라인은 언어별 최근 스냅샷을 최대 7일 사용. 날짜·원본 링크·지도 목적지 및 저장한 행사 ID는 원문 기준 유지.
+
+### 운영 연결 후 수행할 순서
+
+1. `kenjustdoit_hiken` 조직 ID/무료 플랜/프로젝트를 확인하고 전용 Hiken 프로젝트를 준비. 기존 테이블을 조회한 후 위 마이그레이션 적용.
+2. Vercel `seoulactive`의 Production에만 `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `CRON_SECRET` 설정. secret은 채팅이나 Git에 기록하지 않고 서비스 설정에서 입력. 로컬 검증은 별도의 Development 키를 `.env.local`에 설정하며 기존 파일은 덮어쓰지 않음. Preview에는 운영 쓰기 키를 공유하지 않음.
+3. `npm run sync:translations`로 실제 서울 행사 스냅샷 동기화 및 초기 번역. 이 명령 역시 DB 전역 한도를 사용. 실제 번역이 있는 행사로 en/ja/es 목록·상세·검색 확인; 아직 처리되지 않은 행사는 원문 표시가 정상.
+4. DB 읽기/쓰기 권한과 보안 advisors, Cron 비인가 401, 실제 provider 한도/실패 응답, 브라우저 콘솔, 모바일 화면 확인 후 `npm run build`.
+5. 검토한 파일만 main 커밋·푸시 → Vercel 자동 배포 READY/커밋 확인 → 공개 도메인에서 실제 데이터·번역·검색·지도 확인. 현재 이 단계는 수행하지 않음.
+
+로컬 검증: 테스트 21개 및 빌드 통과. PGlite PostgreSQL 엔진에서 마이그레이션/권한/예산/해시/lease 검증. 격리된 예시 서버에서 Chrome 320·430px × 네 언어, 자동 상세 표시/원문 전환, 3개 외국어 검색 및 빠른 언어 변경을 확인. 가로 넘침 없음, 주요 버튼 최소 52px, 콘솔 오류 없음. 실제 API를 사용하는 로컬 서버에서는 DB 미설정 시에도 현재·예정 행사 314개와 한국어 원문이 표시되고 번역 불가 안내가 나타남을 확인. 실제 Android Chrome/iPhone Safari 기기 및 운영 DB 연동은 아직 미검증.
+
+참고: [MyMemory 무료 한도](https://mymemory.translated.net/doc/usagelimits.php), [Vercel Cron 무료 플랜 제약](https://vercel.com/docs/cron-jobs/usage-and-pricing), [Vercel 함수 실행시간](https://vercel.com/docs/functions/limitations). 기존 운영 배포로 롤백할 때는 예약 작업을 비활성화하고 DB 데이터는 보존하여 재배포 시 재사용합니다.
+
+## 기존 운영 배포 이력
+
 - 공개 URL: https://www.hiken.org
 - 추가 운영 별칭: https://hiken.org / https://seoulactivebyken.vercel.app
 - Vercel team: `team_69AyfLuhUaGHbSuW49EQSMDI`

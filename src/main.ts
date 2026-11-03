@@ -7,6 +7,8 @@ import { offlineData } from './offline.ts';
 import type { CultureEvent, Category, Filters } from './events.ts';
 import { messages, locales } from './i18n.ts';
 import type { Locale } from './i18n.ts';
+import { displayEvent, readTranslations, translationCopy } from './translations.ts';
+import type { TranslationMap } from './translations.ts';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 let storageFailed = false;
@@ -18,6 +20,7 @@ const storedSaved = read('hiken:saved');
 const saved = new Set<string>(Array.isArray(storedSaved) ? storedSaved.filter((s): s is string => typeof s === 'string').slice(0, 500) : []);
 let events: CultureEvent[] = [], loading = true, error = '', updated = '', partial = false, page = 1, view: 'list' | 'calendar' = 'list';
 let stale = false, offline = false, sort: 'ending' | 'starting' | 'newest' = 'ending';
+let translations: TranslationMap = new Map(), loadVersion = 0, translationUnavailable = false;
 let month = new Date(`${seoulToday().slice(0, 7)}-01T00:00:00Z`);
 let filters: Filters = { query: '', category: 'all', district: '', date: '', ongoing: false, free: false, saved: false };
 const t = () => messages[locale];
@@ -31,15 +34,17 @@ function bookmark(e: CultureEvent, b: HTMLButtonElement) {
   b.setAttribute('aria-label', saved.has(e.id) ? t().unsave : t().save); b.setAttribute('aria-pressed', String(saved.has(e.id)));
   renderResults();
 }
-const showDetail = (event: CultureEvent) => showEventDetail(event, locale);
+const showDetail = (event: CultureEvent) => showEventDetail(event, locale, translations.get(event.id));
 function card(e: CultureEvent) {
+  const fields = translations.get(e.id), display = displayEvent(e, fields);
   const article = el('article', `event-card ${e.category}`); const poster = el('div', 'poster');
   const art = el('div', 'poster-art'); art.setAttribute('aria-hidden', 'true'); art.append(el('span', '', 'SEOUL'), el('strong', '', e.category === 'exhibition' ? '展' : e.category === 'performance' ? '音' : '遊'), el('span', '', 'CULTURE & EVERYDAY')); poster.append(art);
   if (safeUrl(e.image, true)) { const img = el('img'); img.src = safeUrl(e.image, true); img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.addEventListener('error', () => img.remove()); poster.append(img); }
   const save = button(saved.has(e.id) ? '♥' : '♡', () => bookmark(e, save), 'bookmark');
   save.setAttribute('aria-label', saved.has(e.id) ? t().unsave : t().save); save.setAttribute('aria-pressed', String(saved.has(e.id))); poster.append(save);
   const body = el('div', 'card-body'); const badges = el('div', 'badges'); badges.append(el('span', 'badge', t()[e.category])); if (e.free) badges.append(el('span', 'badge free', t().free));
-  const title = el('h3', '', e.title); title.lang = 'ko'; const venue = el('p', 'venue', `${e.district ? e.district + ' · ' : ''}${e.place}`); venue.lang = 'ko';
+  const title = el('h3', '', display.title); title.lang = fields?.title !== undefined ? locale : 'ko'; const venue = el('p', 'venue', display.place); venue.lang = fields?.place !== undefined ? locale : 'ko';
+  if (locale !== 'ko' && fields?.title === undefined) badges.append(el('span', 'translation-pending', translationCopy[locale].pending));
   body.append(badges, title, el('p', 'dates', `${formatted(e.start)} — ${formatted(e.end)}`), venue, button(`${t().detail} ↗`, () => showDetail(e), 'detail-link'));
   article.append(poster, body); return article;
 }
@@ -53,7 +58,7 @@ function renderCalendar(host: HTMLElement) {
   const grid = el('div', 'calendar-grid');
   for (let i = 0; i < 7; i++) grid.append(el('span', 'weekday', new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(2024, 0, 7 + i)))));
   for (let i = 0; i < month.getUTCDay(); i++) grid.append(el('span'));
-  const eligible = filterEvents(events, { ...filters, date: '', ongoing: false }, saved, '0000-00-00');
+  const eligible = filterEvents(events, { ...filters, date: '', ongoing: false }, saved, '0000-00-00', translations);
   const days = new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + 1, 0)).getUTCDate();
   for (let day = 1; day <= days; day++) {
     const key = `${month.toISOString().slice(0, 7)}-${String(day).padStart(2, '0')}`;
@@ -73,7 +78,8 @@ function renderResults() {
     const state = el('div', 'state'); state.append(el('h2', '', t().error), el('p', '', error === 'CONFIG_REQUIRED' ? t().config : error === 'SECURE_TRANSPORT_REQUIRED' ? t().transport : t().retry), button(t().retry, () => void load(), 'primary')); host.append(state); return;
   }
   if (stale || offline) { const notice = el('div', 'notice', offline ? x().offline : x().stale); notice.append(button(x().refresh, () => void load())); host.append(notice); }
-  const result = filterEvents(events, filters, saved).sort((a, b) => sort === 'ending' ? a.end.localeCompare(b.end) : sort === 'newest' ? b.start.localeCompare(a.start) : a.start.localeCompare(b.start));
+  if (locale !== 'ko') host.append(el('p', 'notice', translationUnavailable ? x().translationError : translationCopy[locale].coverage));
+  const result = filterEvents(events, filters, saved, seoulToday(), translations).sort((a, b) => sort === 'ending' ? a.end.localeCompare(b.end) : sort === 'newest' ? b.start.localeCompare(a.start) : a.start.localeCompare(b.start));
   const count = el('p', 'result-count', `${result.length.toLocaleString(locale)} ${t().count}`); count.setAttribute('role', 'status'); host.append(count);
   if (view === 'calendar') renderCalendar(host);
   if (!result.length) { const empty = el('div', 'state'); empty.append(el('h3', '', t().empty), el('p', '', t().emptyHint), button(t().reset, reset, 'primary')); host.append(empty); return; }
@@ -100,7 +106,7 @@ function render() {
   const lang = el('select'); lang.id = 'language'; lang.setAttribute('aria-label', t().language);
   const names = { ko: '한국어', en: 'English', ja: '日本語', es: 'Español' };
   locales.forEach(code => { const opt = el('option', '', names[code]); opt.value = code; opt.selected = code === locale; lang.append(opt); });
-  lang.addEventListener('change', () => { locale = lang.value as Locale; write('hiken:locale', locale); render(); }); links.append(explore, savedButton); nav.append(logo, links, lang); header.append(nav);
+  lang.addEventListener('change', () => { locale = lang.value as Locale; write('hiken:locale', locale); translations = new Map(); page = 1; render(); void load(); }); links.append(explore, savedButton); nav.append(logo, links, lang); header.append(nav);
   const main = el('main', 'shell'); const hero = el('section', 'hero'); const copy = el('div', 'hero-copy');
   const headline = el('h1');
   for (const line of x().hero.split('\n')) headline.append(el('span', 'headline-line', line));
@@ -111,7 +117,8 @@ function render() {
   const graphic = el('div', 'hero-feature');
   if (featured) {
     const img = el('img'); img.src = safeUrl(featured.image, true); img.alt = ''; img.referrerPolicy = 'no-referrer'; img.fetchPriority = 'high'; img.addEventListener('error', () => img.remove());
-    const caption = el('div', 'feature-caption'); caption.append(el('span', 'feature-label', x().featured), el('h2', '', featured.title), el('p', '', `${featured.district} · ${formatted(featured.start)}`), button(`${t().detail} ↗`, () => showDetail(featured), 'feature-button'));
+    const featuredTitle = el('h2', '', displayEvent(featured, translations.get(featured.id)).title); featuredTitle.lang = translations.get(featured.id)?.title !== undefined ? locale : 'ko';
+    const caption = el('div', 'feature-caption'); caption.append(el('span', 'feature-label', x().featured), featuredTitle, el('p', '', `${featured.district} · ${formatted(featured.start)}`), button(`${t().detail} ↗`, () => showDetail(featured), 'feature-button'));
     graphic.append(img, caption);
   } else { graphic.append(el('span', 'hero-lettering', '서울'), el('p', '', x().edition)); }
   hero.append(copy, graphic); main.append(hero);
@@ -141,7 +148,7 @@ function render() {
   const views = el('div', 'view-toggle'); (['list', 'calendar'] as const).forEach(v => { const b = button(t()[v], () => { view = v; render(); }, view === v ? 'active' : ''); b.setAttribute('aria-pressed', String(view === v)); views.append(b); }); bar.append(views);
   const results = el('div'); results.id = 'results'; discover.append(search, tabs, controls, bar, results); main.append(discover);
   const footer = el('footer', 'shell footer'); const source = el('a', '', `${t().source} ↗`); source.href = 'https://data.seoul.go.kr/dataList/OA-23041/S/1/datasetView.do'; source.target = '_blank'; source.rel = 'noopener noreferrer';
-  footer.append(el('strong', '', t().footer), source, el('p', '', x().note), el('p', '', x().privacy), el('small', '', `© ${new Date().getFullYear()} Hiken · Seoul · ${x().sourceNote}`));
+  footer.append(el('strong', '', t().footer), source, el('p', '', translationCopy[locale].note), el('p', '', translationCopy[locale].privacy), el('small', '', `© ${new Date().getFullYear()} Hiken · Seoul · ${x().sourceNote}`));
   app.append(skip, header, main, footer); renderResults();
 }
 function usePayload(value: unknown, fromOffline = false): boolean {
@@ -150,23 +157,26 @@ function usePayload(value: unknown, fromOffline = false): boolean {
   if (!Array.isArray(p.events) || !p.events.every(isCultureEvent) || typeof p.updatedAt !== 'string' || !Number.isFinite(Date.parse(p.updatedAt))) return false;
   const age = Date.now() - Date.parse(p.updatedAt);
   if (age < -60_000 || age > 7 * 86400000) return false;
-  events = p.events; updated = p.updatedAt; partial = p.partial === true; stale = p.stale === true; offline = fromOffline; return true;
+  events = p.events; translations = p.locale === locale && locale !== 'ko' ? readTranslations(p.translations) : new Map(); translationUnavailable = p.translationStatus === 'unavailable'; updated = p.updatedAt; partial = p.partial === true; stale = p.stale === true; offline = fromOffline; return true;
 }
 async function load() {
+  const version = ++loadVersion, requestedLocale = locale;
   loading = true; error = ''; renderResults();
   try {
-    const response = await fetch('/api/getEvents', { cache: 'no-cache', signal: AbortSignal.timeout(30_000), headers: { Accept: 'application/json' } });
+    const response = await fetch(`/api/getEvents?lang=${requestedLocale}`, { cache: 'no-cache', signal: AbortSignal.timeout(55_000), headers: { Accept: 'application/json' } });
     const data: unknown = await response.json();
+    if (version !== loadVersion) return;
     if (!data || typeof data !== 'object') throw new Error('INVALID_DATA');
     const payload = data as Record<string, unknown>;
     if (!response.ok) throw new Error(typeof payload.error === 'string' ? payload.error : 'UPSTREAM_ERROR');
     if (!usePayload(payload)) throw new Error('INVALID_DATA');
-    await offlineData(payload).catch(() => undefined);
+    await offlineData(payload, requestedLocale).catch(() => undefined);
   } catch (e) {
-    const cached = await offlineData().catch(() => undefined);
+    const cached = await offlineData(undefined, requestedLocale).catch(() => undefined);
+    if (version !== loadVersion) return;
     if (!usePayload(cached, true)) error = e instanceof Error ? e.message : 'UPSTREAM_ERROR';
   }
-  finally { loading = false; render(); }
+  finally { if (version === loadVersion) { loading = false; render(); } }
 }
 render(); void load();
 if ('serviceWorker' in navigator) void navigator.serviceWorker.register('/service-worker.js').catch(() => undefined);

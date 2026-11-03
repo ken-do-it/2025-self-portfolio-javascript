@@ -6,8 +6,10 @@ import type { Locale } from './i18n.ts';
 import { extra } from './enhancements-i18n.ts';
 import { el, button } from './dom.ts';
 import { formatEventDate } from './format.ts';
+import { displayEvent, translationComplete, translationCopy, validFields } from './translations.ts';
+import type { Translation } from './translations.ts';
 
-export function showEventDetail(e: CultureEvent, locale: Locale) {
+export function showEventDetail(e: CultureEvent, locale: Locale, initialFields: Translation = {}) {
   const t = () => messages[locale];
   const x = () => extra[locale];
   const formatted = (key: string) => formatEventDate(key, locale);
@@ -24,38 +26,41 @@ export function showEventDetail(e: CultureEvent, locale: Locale) {
   const description = el('p', 'program', e.description || t().unknown); description.lang = 'ko';
   dialog.append(dl, el('h3', '', x().description), description);
   const translateStatus = el('p', 'muted'); translateStatus.setAttribute('role', 'status');
+  const controller = new AbortController();
   if (locale !== 'ko') {
-    let translated: Record<string, string> | undefined, showingTranslation = false;
-    const targetLocale = locale;
-    const translate = button(x().translate, () => { void (async () => {
-      translate.disabled = true; translateStatus.textContent = x().translating;
+    let translated = initialFields, showingTranslation = true;
+    const update = () => {
+      const fields = showingTranslation ? translated : {};
+      const display = displayEvent(e, fields);
+      heading.textContent = display.title; heading.lang = fields.title !== undefined ? locale : 'ko';
+      description.textContent = display.description || t().unknown; description.lang = fields.description !== undefined ? locale : 'ko';
+      for (const key of ['place', 'fee', 'audience', 'time'] as const) {
+        values[key].textContent = key === 'fee' && e.free ? t().free : display[key] || t().unknown;
+        values[key].lang = fields[key] !== undefined || key === 'fee' && e.free ? locale : 'ko';
+      }
+      translate.textContent = showingTranslation ? x().original : x().translated;
+      translateStatus.textContent = showingTranslation ? (translationComplete(e, fields) ? x().machine : translationCopy[locale].pending) : '';
+    };
+    const translate = button(x().original, () => { showingTranslation = !showingTranslation; update(); }, 'translate-button');
+    update();
+    dialog.append(el('p', 'muted', translationCopy[locale].notice), translate, translateStatus);
+    // Reading a stored translation never consumes the provider's translation quota.
+    void (async () => {
       try {
-        if (!translated) {
-          const response = await fetch(`/api/translate?${new URLSearchParams({ id: e.id, lang: targetLocale })}`, { signal: AbortSignal.timeout(55_000) });
-          const data = await response.json() as { fields?: Record<string, unknown>; error?: string };
-          if (!response.ok) throw new Error(data.error || 'TRANSLATION_FAILED');
-          if (!data.fields || !['title', 'place', 'description', 'fee', 'audience', 'time'].every(key => typeof data.fields?.[key] === 'string')) throw new Error('TRANSLATION_FAILED');
-          translated = data.fields as Record<string, string>;
-        }
-        showingTranslation = !showingTranslation;
-        const fields = showingTranslation ? translated : e;
-        heading.textContent = fields.title || e.title; heading.lang = showingTranslation ? targetLocale : 'ko';
-        description.textContent = fields.description || t().unknown; description.lang = heading.lang;
-        for (const key of ['place', 'fee', 'audience', 'time'] as const) { values[key].textContent = key === 'fee' && e.free ? t().free : fields[key] || t().unknown; values[key].lang = heading.lang; }
-        translate.textContent = showingTranslation ? x().original : x().translated;
-        translateStatus.textContent = showingTranslation ? x().machine : '';
-      } catch (err) { translateStatus.textContent = err instanceof Error && err.message === 'TRANSLATION_LIMIT' ? x().limit : x().translationError; }
-      finally { translate.disabled = false; }
-    })(); }, 'translate-button');
-    dialog.append(el('p', 'muted', x().translationNotice), translate, translateStatus);
+        const response = await fetch(`/api/translate?${new URLSearchParams({ id: e.id, lang: locale })}`, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15_000)]) });
+        const data = await response.json() as { fields?: unknown; locale?: unknown };
+        if (!response.ok || data.locale !== locale || !validFields(data.fields)) throw new Error('TRANSLATION_FAILED');
+        if (!controller.signal.aborted) { translated = { ...translated, ...data.fields }; update(); }
+      } catch { if (!controller.signal.aborted && !Object.keys(translated).length) translateStatus.textContent = x().translationError; }
+    })();
   }
   const map = el('section', 'map-panel'); map.append(el('h3', '', x().map), el('p', 'muted', x().mapHint));
   const mapActions = el('div', 'map-actions');
   for (const [key, url] of Object.entries(mapLinks(e))) { const a = el('a', 'map-link', `${x()[key as 'naver' | 'kakao' | 'google']} ↗`); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; mapActions.append(a); }
-  map.append(mapActions); dialog.append(map, el('p', 'muted', x().note));
+  map.append(mapActions); dialog.append(map, el('p', 'muted', translationCopy[locale].note));
   const url = safeUrl(e.url);
   if (url) { const a = el('a', 'primary', `${t().official} ↗`); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; dialog.append(a); }
-  dialog.addEventListener('close', () => dialog.remove());
+  dialog.addEventListener('close', () => { controller.abort(); dialog.remove(); });
   dialog.addEventListener('click', ev => { if (ev.target === dialog) { const r = dialog.getBoundingClientRect(); if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) dialog.close(); } });
   document.body.append(dialog); dialog.showModal();
 }

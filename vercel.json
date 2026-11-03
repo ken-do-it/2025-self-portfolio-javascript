@@ -3,14 +3,19 @@
   "outputDirectory": "dist",
   "functions": {
     "api/getEvents.ts": {
-      "maxDuration": 30,
+      "maxDuration": 60,
       "includeFiles": "data/events.snapshot.json"
     },
     "api/translate.ts": {
       "maxDuration": 60,
       "includeFiles": "data/events.snapshot.json"
+    },
+    "api/syncTranslations.ts": {
+      "maxDuration": 300,
+      "includeFiles": "data/events.snapshot.json"
     }
   },
+  "crons": [{ "path": "/api/syncTranslations", "schedule": "15 1 * * *" }],
   "headers": [
     {
       "source": "/",
