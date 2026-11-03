@@ -40,3 +40,32 @@ header{background:#f8f7f3}.topbar{min-height:86px}.logo{font-size:21px;letter-sp
   .detail-dialog{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
   .detail-dialog .close{position:sticky;top:0}
 }
+/* Readable event content and full-width actions on handheld layouts. */
+@media(max-width:560px){
+  .card-body{padding:16px 0 12px;min-width:0}
+  .event-card h3{display:block;min-height:0;max-height:none;overflow:visible;font-size:16px;line-height:1.6;letter-spacing:-.3px;margin:12px 0;word-break:normal;overflow-wrap:anywhere}
+  .event-card h3:lang(ko){word-break:keep-all}
+  .badges{flex-wrap:wrap;gap:6px}.badge{font-size:12px;line-height:1.5;padding:5px 8px}
+  .dates,.venue{font-size:13px;line-height:1.75;word-break:normal}
+  .detail-link{display:block;min-height:48px;padding:12px 8px;margin-top:14px;font-size:14px;line-height:1.6;text-align:center;border:1px solid var(--line);border-radius:7px;background:#eeeee7}
+  .detail-dialog{width:calc(100% - 24px);padding:18px}
+  .detail-dialog .close{min-width:48px;min-height:48px;padding:10px 14px;margin:0 0 16px auto;border:1px solid var(--line);font-size:15px;line-height:1.5;box-shadow:0 2px 8px #20352d0d}
+  .detail-poster{max-height:240px;margin-bottom:20px}
+  .detail-dialog h2{font-size:clamp(21px,5.5vw,26px);line-height:1.5;letter-spacing:-.4px;word-break:normal;overflow-wrap:anywhere}
+  .detail-dialog h2:lang(ko){word-break:keep-all}
+  .detail-dialog dl{grid-template-columns:minmax(0,1fr);gap:6px;margin:24px 0;font-size:15px;line-height:1.75}
+  .detail-dialog dt{font-size:13px;font-weight:650;margin-top:12px}.detail-dialog dt:first-child{margin-top:0}
+  .detail-dialog dd{min-width:0;word-break:normal;overflow-wrap:anywhere}
+  .detail-dialog h3{font-size:18px;line-height:1.5;word-break:normal}
+  .detail-dialog .program{font-size:15px;line-height:1.85;word-break:normal}
+  .detail-dialog .muted{font-size:13px;line-height:1.8;word-break:normal;overflow-wrap:anywhere}
+  .translate-button,.detail-dialog>a.primary{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:13px 16px;font-size:16px;line-height:1.5;white-space:normal;word-break:normal;text-align:center}
+  .translate-button{background:var(--green);color:white}.translate-button:hover{background:#226052}
+  .map-panel{padding:16px;margin:24px 0}.map-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+  .map-link{width:100%;min-height:52px;padding:13px 12px;font-size:15px;line-height:1.5;justify-content:center;text-align:center;word-break:normal}
+}
+@media(max-width:420px){
+  .event-grid{grid-template-columns:minmax(0,1fr);gap:28px}
+  .poster{height:260px}.poster img{object-fit:contain;background:#ecece4}
+  .event-card h3{font-size:18px}
+}

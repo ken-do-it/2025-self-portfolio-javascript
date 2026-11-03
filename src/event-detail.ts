@@ -13,9 +13,10 @@ export function showEventDetail(e: CultureEvent, locale: Locale) {
   const formatted = (key: string) => formatEventDate(key, locale);
   const dialog = el('dialog', 'detail-dialog'); const close = button(`${t().close} ×`, () => dialog.close(), 'close');
   dialog.setAttribute('aria-labelledby', 'detail-title');
+  dialog.append(close);
   if (e.image) { const img = el('img', 'detail-poster'); img.src = safeUrl(e.image, true); img.alt = ''; img.referrerPolicy = 'no-referrer'; img.addEventListener('error', () => img.remove()); dialog.append(img); }
   const heading = el('h2', '', e.title); heading.id = 'detail-title'; heading.lang = 'ko';
-  dialog.append(close, el('span', 'badge', t()[e.category]), heading);
+  dialog.append(el('span', 'badge', t()[e.category]), heading);
   const dl = el('dl');
   const values = { place: el('dd', '', e.place), fee: el('dd', '', e.free ? t().free : e.fee || t().unknown), audience: el('dd', '', e.audience || t().unknown), time: el('dd', '', e.time || t().unknown) };
   dl.append(el('dt', '', t().period), el('dd', '', `${formatted(e.start)} — ${formatted(e.end)}`));
