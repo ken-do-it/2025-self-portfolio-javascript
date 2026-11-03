@@ -2,7 +2,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "functions": { "api/getEvents.ts": { "maxDuration": 30, "includeFiles": "data/events.snapshot.json" }, "api/translate.ts": { "maxDuration": 60, "includeFiles": "data/events.snapshot.json" } },
-  "headers": [{ "source": "/(.*)", "headers": [
+  "headers": [
+  { "source": "/", "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }] },
+  { "source": "/index.html", "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }] },
+  { "source": "/service-worker.js", "headers": [{ "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }] },
+  { "source": "/(.*)", "headers": [
     { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" },
     { "key": "X-Content-Type-Options", "value": "nosniff" },
     { "key": "Referrer-Policy", "value": "no-referrer" },

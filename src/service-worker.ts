@@ -1,8 +1,9 @@
 /// <reference lib="webworker" />
 const worker = globalThis as unknown as ServiceWorkerGlobalScope;
 declare const BUILD_ID: string;
+declare const SHELL_ASSETS: string[];
 const CACHE = 'hiken-shell-' + BUILD_ID;
-const assets = ['/', '/main.js', '/style.css', '/favicon-32x32.png'];
+const assets = SHELL_ASSETS;
 worker.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(assets)).then(() => worker.skipWaiting()));
 });
