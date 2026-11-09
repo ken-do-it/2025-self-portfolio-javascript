@@ -1,5 +1,13 @@
 # 자동 번역 작업 재개 안내
 
+## 2026-11-09 연결 재확인
+
+- 새 Supabase 연결에서 `hiken` 프로젝트 `ahnstjmnjpfstauzoxif` 접근 확인. 조직 ID `wpqnwdsnojutappkfnsa`, Free 플랜, ACTIVE_HEALTHY, 리전 `ap-south-1`(뭄바이).
+- `public` 및 `hiken_private` 테이블 조회 결과 비어 있음. 기존 `small-steps-todo` 프로젝트와 분리된 새 계정 연결을 사용한다.
+- 마이그레이션 도구를 두 번 호출했으나 모두 확인 요청 만료(`status: expired`)로 종료. 적용 성공은 확인되지 않았으므로 재개 시 테이블/마이그레이션 상태를 먼저 조회하고 도구 승인 후 적용한다.
+- 앱 서버의 `.env.local`에 확인된 프로젝트의 `SUPABASE_URL`을 추가하고 기존 설정을 보존했다. `SUPABASE_SECRET_KEY`는 아직 없음. Secret API key는 사용자가 로컬 비밀 설정에 직접 저장하도록 안내했다. 채팅이나 Git으로 수집하지 않는다.
+- 원격 마이그레이션·서버 인증 연결·실제 데이터 동기화·운영 배포는 아직 미완료.
+
 2026-11-03: 사용자 요청으로 Supabase 연결 및 운영 배포를 보류하고 `codex/persist-event-translations` 브랜치에 작업을 보관한다. main 및 운영 사이트는 변경하지 않는다.
 
 ## 현재 완료한 작업
