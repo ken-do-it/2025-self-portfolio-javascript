@@ -61,7 +61,26 @@ test('cron authentication fails closed and worker stops on the shared provider q
       return true;
     }
   });
-  assert.equal(claims, 1); assert.equal(exhausted, true); assert.equal(result.limited, true);
+  assert.ok(claims >= 1 && claims <= 3); assert.equal(exhausted, true); assert.equal(result.limited, true);
+});
+
+test('worker translates at most three independent jobs concurrently and drains every reservation', async () => {
+  let claims = 0, active = 0, peak = 0, finished = 0;
+  const result = await runTranslationWorker({ getEvents: async () => payload, now: () => 0,
+    translate: async () => {
+      active++; peak = Math.max(peak, active);
+      await new Promise(resolve => setTimeout(resolve, 5));
+      active--; return 'Translated';
+    },
+    rpc: async name => {
+      if (name === 'hiken_claim') return claims++ < 7
+        ? { event_key: String(claims), locale: 'en', field: 'title', source_text: event.title, source_hash: String(claims), lease: String(claims), day: today } : null;
+      if (name === 'hiken_finish') finished++;
+      return true;
+    }
+  });
+  assert.equal(peak, 3); assert.equal(active, 0); assert.equal(finished, 7);
+  assert.equal(result.completed, 7); assert.equal(result.failed, 0);
 });
 
 test('PostgreSQL migration enforces permissions, title priority, leases, content invalidation and global quota', async () => {
@@ -69,6 +88,7 @@ test('PostgreSQL migration enforces permissions, title priority, leases, content
   try {
     await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
     await db.exec(await readFile(new URL('../supabase/migrations/20261109124414_event_translations.sql', import.meta.url), 'utf8'));
+    await db.exec(await readFile(new URL('../supabase/migrations/20261109130641_parallel_translation_reuse.sql', import.meta.url), 'utf8'));
     await db.exec('set role anon');
     await assert.rejects(db.query('select public.hiken_claim()'), /permission denied/);
     await assert.rejects(db.query('select * from hiken_private.events'), /permission denied/);
@@ -84,6 +104,7 @@ test('PostgreSQL migration enforces permissions, title priority, leases, content
       'select public.hiken_finish($1,$2,$3,$4,$5::uuid,$6::date,$7,false) as ok', [job.event_key,job.locale,job.field,job.source_hash,lease,job.day,text])).rows[0]!.ok;
     await sync();
     const job = (await claim())!; assert.equal(job.field, 'title'); assert.equal(job.locale, 'en');
+    await db.query("update hiken_private.event_translations t set source_hash=s.source_hash,source_text=s.source_text,priority=s.priority,translated_text=null from hiken_private.event_translations s where t.event_key=s.event_key and t.locale=s.locale and t.locale='en' and t.field='time' and s.field='title'");
     const next = (await claim())!; assert.equal(next.field, 'title'); assert.notEqual(next.lease, job.lease); assert.notEqual(next.locale, job.locale);
     assert.equal(await finish(job, 'Craft exhibition', '00000000-0000-4000-8000-000000000000'), false);
     assert.equal(await finish(job, 'Craft exhibition'), true);
@@ -94,8 +115,11 @@ test('PostgreSQL migration enforces permissions, title priority, leases, content
     await sync(); // Older snapshot cannot overwrite the new source.
     const snapshot = (await db.query<{ data: typeof payload }>('select public.hiken_snapshot() as data')).rows[0]!.data;
     assert.equal(snapshot.events[0]?.description, '변경된 설명');
+    await db.query("update hiken_private.event_translations t set source_hash=s.source_hash,source_text=s.source_text,priority=s.priority,translated_text=null from hiken_private.event_translations s where t.event_key=s.event_key and t.locale=s.locale and t.locale='en' and t.field='time' and s.field='title'");
     await db.query('update hiken_private.translation_budget set characters=4500');
     assert.equal(await claim(), null);
+    const reused = await db.query<{ translated_text: string }>("select translated_text from hiken_private.event_translations where locale='en' and field='time'");
+    assert.equal(reused.rows[0]?.translated_text, 'Craft exhibition');
     await assert.rejects(db.query('update hiken_private.translation_budget set characters=4501'), /check constraint/);
     await db.exec('reset role');
     const permissions = await db.query<{ unsafe: number }>("select count(*)::integer as unsafe from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname like 'hiken_%' and (has_function_privilege('anon',p.oid,'execute') or has_function_privilege('authenticated',p.oid,'execute') or p.prosecdef)");
