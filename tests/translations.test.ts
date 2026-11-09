@@ -68,7 +68,7 @@ test('PostgreSQL migration enforces permissions, title priority, leases, content
   const db = new PGlite();
   try {
     await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
-    await db.exec(await readFile(new URL('../supabase/migrations/20261103105720_event_translations.sql', import.meta.url), 'utf8'));
+    await db.exec(await readFile(new URL('../supabase/migrations/20261109124414_event_translations.sql', import.meta.url), 'utf8'));
     await db.exec('set role anon');
     await assert.rejects(db.query('select public.hiken_claim()'), /permission denied/);
     await assert.rejects(db.query('select * from hiken_private.events'), /permission denied/);

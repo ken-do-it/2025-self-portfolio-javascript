@@ -1,5 +1,15 @@
 # 자동 번역 작업 재개 안내
 
+## 2026-11-09 DB 연결 완료 (최신 상태)
+
+- `.env.local`에 사용자가 설정한 서버 Secret API key 인증 성공. 키는 출력하거나 커밋하지 않았다.
+- Hiken 프로젝트에 `event_translations` 및 `restrict_rls_trigger_access` 마이그레이션 적용 완료. 로컬 파일명을 원격 이력 버전 `20261109124414`, `20261109124537`과 일치시켰다.
+- 실제 서울 행사 746개 저장. 초기 작업 126개 번역 완료, 실패 0. 모든 행사 번역 완료가 아니라 무료 예산과 실행시간 내 첫 배치 처리 결과이다.
+- 실제 DB에서 영어·일본어·스페인어 제목 검색 및 목록/상세 API 번역 일치 검증 통과. 테스트 21개와 빌드 통과.
+- 모든 Hiken RPC의 anon/authenticated 실행 권한 없음, service_role 실행 허용 확인. 자동 RLS 이벤트 트리거의 불필요한 API 실행 권한을 회수했다. 보안 advisors의 WARN/ERROR 없음. private 테이블에 일반 사용자 정책이 없다는 INFO 4건은 서버 전용 설계에 따른 의도된 차단이다.
+- 아직 할 일: Vercel Production 환경변수/CRON_SECRET 설정, 실제 브라우저에서 DB 연동 화면 검증, main 통합 및 운영 배포 재개. 현재 브랜치에 보관하며 운영 사이트는 이 DB에 아직 연결하지 않았다.
+- 아래 연결 대기 기록은 과거 상태이다. DB 초기 마이그레이션을 다시 실행하지 말고 원격 이력부터 확인한다.
+
 ## 2026-11-09 연결 재확인
 
 - 새 Supabase 연결에서 `hiken` 프로젝트 `ahnstjmnjpfstauzoxif` 접근 확인. 조직 ID `wpqnwdsnojutappkfnsa`, Free 플랜, ACTIVE_HEALTHY, 리전 `ap-south-1`(뭄바이).
@@ -23,7 +33,7 @@
 1. `git switch codex/persist-event-translations`로 이 브랜치에서 재개하고 작업 트리 상태부터 확인한다. 개인 파일 `README_LATEST.md`, `readme.md`와 `.env.local`은 보존한다.
 2. 사용할 Supabase 계정·조직·프로젝트 ID를 다시 확인한다. 이전 지정 이름은 `kenjustdoit_hiken`이었지만, 사용자는 이후 다른 계정의 프로젝트 생성 화면을 제시했다. 스크린샷의 기본 조직을 확정 대상으로 간주하지 않는다. 기존 `kenjustdoit_2_app / small-steps-todo`를 수정하지 않는다.
 3. 프로젝트 생성 시 Free 조직, 이름 `hiken`, 서울 리전(`ap-northeast-2`), Data API 켜기, 새 테이블 자동 노출 끄기, 자동 RLS 켜기를 권장한다. DB 비밀번호는 사용자가 생성하여 비밀번호 관리자에 저장하고 채팅/저장소에는 넣지 않는다. GitHub 연결은 이 앱의 DB 사용에 필수 아님.
-4. Codex Supabase 연결에 해당 조직/프로젝트 접근 권한이 있는지 확인하고 기존 테이블을 조회한다. `supabase/migrations/20261103105720_event_translations.sql` 적용 후 권한 및 보안 advisors를 검사한다. 자동 노출을 꺼도 마이그레이션에서 필요한 서버 권한을 명시적으로 부여한다.
+4. Codex Supabase 연결에 해당 조직/프로젝트 접근 권한이 있는지 확인하고 기존 테이블을 조회한다. `supabase/migrations/20261109124414_event_translations.sql` 적용 후 권한 및 보안 advisors를 검사한다. 자동 노출을 꺼도 마이그레이션에서 필요한 서버 권한을 명시적으로 부여한다.
 5. Vercel `seoulactive`의 Production에 `SUPABASE_URL`, 서버 전용 `SUPABASE_SECRET_KEY`, 무작위 32자 이상 `CRON_SECRET`을 설정한다. 비밀값은 Git/채팅에 넣지 않는다. Preview에는 운영 쓰기 키를 공유하지 않는다. 로컬 검증용 설정은 기존 `.env.local`을 덮어쓰지 않고 추가한다.
 6. `npm run sync:translations`로 실제 서울 행사 동기화 및 초기 번역. 무료 한도 내에서 제목부터 순차 처리하므로 전체 행사 즉시 번역은 보장되지 않는다. API 제한 응답이 번역문으로 저장되지 않는지 확인한다.
 7. 실제 번역된 행사로 en/ja/es 카드·상세·검색·원문 전환·지도 연결을 확인한다. 미번역/DB 장애/오프라인/언어 연속 변경도 확인한다. Cron 비인가 401, 중복 실행 예산과 lease 동작, 모바일 화면을 점검하고 `npm run build`를 실행한다.

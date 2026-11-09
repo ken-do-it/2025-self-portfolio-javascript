@@ -1,11 +1,19 @@
 # 운영 배포 기록 — 2026-11-03
 
+## 2026-11-09 DB 연결 검증 완료, 운영 배포 대기
+
+`codex/persist-event-translations` 브랜치의 서버 코드를 새 Hiken 프로젝트 `ahnstjmnjpfstauzoxif`에 연결했다. Free 플랜, 뭄바이(`ap-south-1`) 리전이다. 원격 마이그레이션 2개 적용 및 서버 키 인증 성공, 실제 행사 746개 저장, 첫 배치 번역 126개 완료/실패 0. 세 외국어의 실제 DB 제목 검색과 목록·상세 API 번역 일치를 검증했다. 전체 번역은 아직 진행 대기 상태이며 다음 배치도 공유 하루 예산을 사용해야 한다.
+
+일반 클라이언트의 Hiken 함수 실행 권한은 차단되어 있고 자동 RLS 트리거의 공개 실행 권한 경고는 수정했다. 보안 검사에는 private 테이블의 정책 부재 INFO 4개만 남으며 서버 전용 접근 구조상 의도된 상태다. [해당 검사 설명](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy). 서버 비밀값은 `.env.local`에만 보관한다.
+
+Vercel 환경변수 설정, 브라우저 통합 검증, main 통합·푸시 및 운영 배포는 아직 수행하지 않았다. 최신 재개 순서는 `TRANSLATION-RESUME.md` 상단을 참고한다. 아래의 DB 미연결 설명은 과거 작업 이력이다.
+
 ## 자동 번역 저장소 작업 — 아직 운영 미반영
 
 이 절은 현재 로컬 작업 상태이며 아래의 기존 운영 배포 기록과 구분합니다. 대상 조직은 사용자가 지정한 `kenjustdoit_hiken`입니다. 연결된 Supabase 도구에서 현재 이 조직이 조회되지 않아 원격 프로젝트 생성, 마이그레이션 적용, 운영 환경변수 설정 및 main 푸시를 보류했습니다. 기존 `kenjustdoit_2_app / small-steps-todo`는 사용하지 않았습니다.
 
 - 로컬 구현: 언어별 카드·상세 자동 표시, 원문 전환, 번역/한국어 동시 검색, 언어별 오프라인 저장 및 늦은 언어 응답 무시.
-- 저장소: `supabase/migrations/20261103105720_event_translations.sql`. 공개 행사 원문과 필드별 번역을 `hiken_private` 스키마에 저장. 원문 해시가 달라진 필드만 다시 번역하며, 조회 시에도 해시를 확인해 오래된 번역을 제외.
+- 저장소: `supabase/migrations/20261109124414_event_translations.sql`. 공개 행사 원문과 필드별 번역을 `hiken_private` 스키마에 저장. 원문 해시가 달라진 필드만 다시 번역하며, 조회 시에도 해시를 확인해 오래된 번역을 제외.
 - 보안: 모든 테이블 RLS 활성화, anon/authenticated 권한 없음. public RPC는 SECURITY INVOKER이며 service_role만 실행 가능. 서버용 secret API key만 사용하며 브라우저에는 키를 보내지 않음.
 - 작업: `/api/syncTranslations`는 32자 이상 `CRON_SECRET`의 Bearer 인증 필수. DB 잠금으로 전역 하루 4,500자 예약. 제목 우선, 동일 문구 재사용, 실패/중단 작업은 lease 만료 후 재시도. 429/공급자 한도 응답은 당일 작업 중단. 방문자의 목록/상세 요청은 저장된 번역만 읽고 번역 API를 호출하지 않음.
 - 무료 일정: Vercel Cron 매일 `15 1 * * *` UTC(한국 오전 10시대, Hobby는 정확한 분 보장 없음), 함수 300초/실제 작업 목표 240초. 한도 또는 실행시간에 도달하면 남은 작업은 다음 실행으로 이월. 전체 행사 즉시 번역을 보장하지 않음.
