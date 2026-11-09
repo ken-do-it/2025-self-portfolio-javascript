@@ -9,6 +9,7 @@ import { messages, locales } from './i18n.ts';
 import type { Locale } from './i18n.ts';
 import { displayEvent, readTranslations, translationCopy } from './translations.ts';
 import type { TranslationMap } from './translations.ts';
+import { translationStatusPanel } from './translation-status.ts';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 let storageFailed = false;
@@ -125,6 +126,7 @@ function render() {
   const stats = el('div', 'culture-stats');
   for (const [value, text] of [[current.length, x().upcoming], [current.filter(e => e.free).length, x().freeEvents], [new Set(current.map(e => e.district).filter(Boolean)).size, x().districts]]) { const stat = el('div'); stat.append(el('strong', '', Number(value).toLocaleString(locale)), el('span', '', String(text))); stats.append(stat); }
   main.append(stats);
+  main.append(translationStatusPanel(locale));
   const discover = el('section', 'discover'); discover.id = 'discover'; discover.tabIndex = -1;
   const search = el('form', 'search'); search.setAttribute('role', 'search');
   const input = el('input'); input.type = 'search'; input.value = filters.query; input.placeholder = t().search; input.maxLength = 120; input.setAttribute('aria-label', t().search);

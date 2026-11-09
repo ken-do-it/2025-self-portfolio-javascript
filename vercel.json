@@ -2,6 +2,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "functions": {
+    "api/translationStatus.ts": {
+      "maxDuration": 60,
+      "includeFiles": "data/events.snapshot.json"
+    },
     "api/getEvents.ts": {
       "maxDuration": 60,
       "includeFiles": "data/events.snapshot.json"
